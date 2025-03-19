@@ -1,6 +1,6 @@
 import React from 'react';
-import Sidebar from '../Sidebar';
-import ChatList from '../ChatList';
+import Sidebar from '../Sidebar/Sidebar';
+import ChatList from '../ContactList/ChatList';
 import ChatLayout from '../Chat/ChatLayout';
 function Layout() {
   return (
