@@ -1,14 +1,23 @@
 const express = require('express');
 const router = express.Router();
+const {getMessages, sendMessage} = require('../Controller/messages');
+const {getUsers, addUser,} = require('../Controller/users');
+const {handleGetOtp, handleVerifyOtp} = require('../Auth/OTP_Validation')
+
 
 // GET all users
-router.get('/', (req, res) => {
-  res.json({ message: 'List of users' });
-});
+
+router.get('/messages', getMessages);
+router.post('/messages', sendMessage);
+
+router.get('/users', getUsers);
+router.post('/users', addUser);
+
+router.post('/auth/send-otp', handleGetOtp)
+router.post('/verify-otp', handleVerifyOtp)
 
 
-router.post('/', (req, res) => {
-  res.status(201).json({ message: 'User created', data: req.body });
-});
+
 
 module.exports = router;
+
