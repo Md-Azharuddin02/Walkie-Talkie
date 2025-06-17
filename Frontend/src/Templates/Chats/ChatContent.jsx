@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5803");
 
 const ChatContent = () => {
   const [messages, setMessages] = useState([]);
+  const bottomRef = useRef(null);
 
   useEffect(() => {
-    fetch("http://localhost:5803/api/messages")
-      .then((response) => response.json())
-      .then((data) => setMessages(data))
-      .catch((error) => console.error("Error fetching messages:", error));
-
-    const handleReceiveMessage = (message, userId) => {
+    const handleReceiveMessage = ({ message }) => {
       setMessages((prev) => [...prev, message]);
-      console.log('The user id'+ userId)
     };
 
     socket.on("receiveMessage", handleReceiveMessage);
@@ -25,13 +20,19 @@ const ChatContent = () => {
     };
   }, []);
 
+  // Scroll to the bottom every time messages update
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   return (
     <div className="flex-1 overflow-y-auto p-4 bg-gray-200">
-      {messages.map(
-        (message) => (
-          (<Message key={message._id} message={message} />)
-        )
-      )}
+      {messages.map((message, index) => (
+        <Message key={index} message={message} />
+      ))}
+      <div ref={bottomRef} />
     </div>
   );
 };

@@ -1,2 +1,0 @@
-Bug List:
-1. Account get create before OTP verification.

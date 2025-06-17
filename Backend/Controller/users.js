@@ -1,97 +1,94 @@
-const UserModel = require('../Model/Users');
+// server/Controller/users.js
+const UserModel = require("../Model/Users");
 
-async function getUsers(req, res){
-   try{
-    const users = await UserModel.find({});
-    res.status(200).json(users);
-   }
-   catch(error){
-    res.status(500).json({error: 'Failed to get users'});
-   }
+// ─── GET ALL USERS ───────────────────────────────────────────────────────────────
+// GET /api/user
+async function getUser(req, res) {
+  const { _id: userId } = req.user;
+
+  try {
+    const user = await UserModel
+      .findById(userId)
+      .select('name email phoneNumber profileImage status') // only what you need
+      .lean()       // returns a plain JS object, faster than a Mongoose doc
+      .exec();
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    return res.status(200).json(user);
+  } catch (err) {
+    console.error('Error in getUser:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 }
 
-async function addUser(req, res){
-    const user = req.body;
-    try{
-        const newUser = new UserModel(user);
-        await newUser.save();
-        res.status(201).json(newUser);
-    }
-    catch(error){
-        res.status(500).json({error: 'Failed to add user'});
-    }
+
+// ─── ADD A USER (no file here) ────────────────────────────────────────────────────
+async function addUser(req, res) {
+  const user = req.body;
+  try {
+    const newUser = new UserModel(user);
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add user" });
+  }
 }
 
-// Get user profile
+// ─── GET USER PROFILE (example, requiring `req.user.id` via some auth) ───────────
 const getUserProfile = async (req, res) => {
-    try {
-        const user = await UserModel.findById(req.user.id).select('-otpSecret -generatedAt');
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: "User not found"
-            });
-        }
-
-        res.json({
-            success: true,
-            user: {
-                name: user.name,
-                status: user.status,
-                profileImage: user.profileImage,
-                phoneNumber: user.phoneNumber
-            }
-        });
-    } catch (error) {
-        console.error('Error in getUserProfile:', error);
-        res.status(500).json({
-            success: false,
-            error: "Internal server error"
-        });
+  try {
+    // Imagine you set req.user.id in some authentication middleware
+    const user = await UserModel.findById(req.user.id).select(
+      "-otpSecret -generatedAt"
+    );
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
     }
+
+    res.json({
+      success: true,
+      user: {
+        name: user.name,
+        status: user.status,
+        profileImage: user.profileImage,
+        phoneNumber: user.phoneNumber,
+      },
+    });
+  } catch (error) {
+    console.error("Error in getUserProfile:", error);
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
 };
 
-// Update user profile
+// ─── UPDATE PROFILE (name, about, + image upload) ────────────────────────────────
 const updateProfile = async (req, res) => {
-    try {
-        const { name, status } = req.body;
-        const profileImage = req.file?.path; // If using multer for file upload
+  // Because we used upload.single("image") above, Multer has populated:
+  //   • req.file → file info (with .path, .originalname, .mimetype, etc.)
+  //   • req.body → text fields ("name", "about")
+  const { name, about } = req.body;
+  const profileImagePath = req.file?.path; // e.g. "server/uploads/1629032893456.png"
 
-        const updateData = {
-            ...(name && { name }),
-            ...(status && { status }),
-            ...(profileImage && { profileImage })
-        };
 
-        const user = await UserModel.findByIdAndUpdate(
-            req.user.id,
-            updateData,
-            { new: true }
-        ).select('-otpSecret -generatedAt');
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: "User not found"
-            });
-        }
-
-        res.json({
-            success: true,
-            user: {
-                name: user.name,
-                status: user.status,
-                profileImage: user.profileImage,
-                phoneNumber: user.phoneNumber
-            }
-        });
-    } catch (error) {
-        console.error('Error in updateProfile:', error);
-        res.status(500).json({
-            success: false,
-            error: "Internal server error"
-        });
-    }
+  // TODO: save these into your MongoDB user document. For now, return them:
+  return res.status(200).json({
+    success: true,
+    message: "Profile updated successfully",
+    data: { name, about, imagePath: profileImagePath },
+  });
 };
 
-module.exports = {getUsers, addUser, getUserProfile, updateProfile};
+module.exports = {
+  getUser,
+  addUser,
+  getUserProfile,
+  updateProfile,
+};

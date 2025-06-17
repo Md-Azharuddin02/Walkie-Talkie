@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const generateToken = (user) => {
     const payload = {
-        id: user._id,
+        _id: user._id.toString(),
         phoneNumber: user.phoneNumber,
         name: user.name
     }

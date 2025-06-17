@@ -4,7 +4,7 @@ import Search from "../../Components/Search.jsx";
 import useFetchData from "../../Custom/fetchData";
 import User from "../../Components/User.jsx";
 import Loader from '../../Components/Loader.jsx';
-
+import { Store } from "../../Store/Store";
 
 // Add this style block (you might want to move it to a separate CSS file)
 const styles = `
@@ -45,9 +45,11 @@ const FilterButton = ({ label, isActive = false, onClick }) => {
 
 // Main ChatList Component
 const UsersList = () => {
+  const { user, isCardOpen, setIsCardOpen } = useContext(Store);
   const filterOptions = ["ALL", "Unread", "Favourite", "Groups"];
-  const [loader, error, users] = useFetchData("api/users");
-  console.log('loader is loading:', loader)
+  const [loader, error, data] = useFetchData("api/user");
+
+
 
   return (
     <>
@@ -83,10 +85,12 @@ const UsersList = () => {
         {/* Chat List with Custom Scrollbar */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           {
-            loader ? (<Loader/>): (
-              users.map((user) => (
-                <User key={user._id} user={user} />
-              ))
+            loader ? (
+              <Loader />
+            ) : user && Array.isArray(user.friends) ? (
+              data.friends.map((u) => <User key={u._id} user={u} />)
+            ) : (
+              <p>No friends to display.</p>
             )
           }
 

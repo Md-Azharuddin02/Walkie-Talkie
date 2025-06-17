@@ -1,10 +1,11 @@
 const UserModel = require("../Model/Users");
 const { getSecret, generateOTP, verifyOTP } = require("./generateOtp");
 const { generateToken } = require("../Service/authentication");
+const { getIO } = require('../Service/socket');
+
 
 async function handleGetOtp(req, res) {
   const { phoneNumber } = req.body;
-  console.log('Received request for phone number:', phoneNumber);
 
   if (!phoneNumber) {
     return res.status(400).json({
@@ -18,11 +19,12 @@ async function handleGetOtp(req, res) {
 
     if (!user) {
       const secret = getSecret();
+
       user = new UserModel({
         phoneNumber,
         otpSecret: secret,
+
         name: `User_${phoneNumber.slice(-4)}`,
-        status: 'Hey there! I am using Walkie-Talkie'
       });
       await user.save();
     }
@@ -42,17 +44,15 @@ async function handleGetOtp(req, res) {
     });
   }
 }
-
 async function handleVerifyOtp(req, res) {
-  const { phoneNumber, otp } = req.body;
-
+  const { phoneNumber, otp, socketId} = req.body;
+  console.log("socketId:", socketId);
   if (!phoneNumber || !otp) {
     return res.status(400).json({
       success: false,
       error: "Phone number and OTP are required"
     });
   }
-
   try {
     const user = await UserModel.findOne({ phoneNumber });
     if (!user) {
@@ -65,21 +65,23 @@ async function handleVerifyOtp(req, res) {
     const isValid = verifyOTP(otp, user.otpSecret);
 
     if (isValid) {
-      // Update last active time
-      user.lastActive = new Date();
-      await user.save();
+      await UserModel.findOneAndUpdate(
+        { phoneNumber },
+        {
+          $push: {
+            connections: { socketId, connectedAt: new Date() }
+          },
+          $set: { status: 'online' }
+        },
+        { new: true }
+      );
 
+      await user.save();
       const token = generateToken(user);
       
       // Set cookie with appropriate options
-      res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        path: '/',
-        maxAge: 3600000, // 1 hour
-        domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined
-      });
+      res.cookie('token', token);
+      
 
       res.status(200).json({
         success: true,

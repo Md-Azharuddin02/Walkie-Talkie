@@ -1,36 +1,45 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
+const useFetchData = (base_URL) => {
+  const [loader, setLoader] = useState(false);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState(null); // Start as null for clarity
 
-const useFetchData =  (base_URL) => {
-    const [loader, setLoader] = useState(false);
-    const [error, setError] = useState(null);
-    const [data, setData] = useState([]);
-    console.log(loader)
+  useEffect(() => {
+    const fetchData = async (url) => {
+      setLoader(true);
+      try {
+        const response = await axios.get(url);
 
-    useEffect(() => {
-        const fetchData = async (url) => {
-            try {
-                setLoader(true);
-                const response = await axios.get(url);
-                if (!response.status === 200) {
-                    throw new Error(`An error occour with status code ${response.status}`)
-                }
-                setData(response.data);
-                setLoader(false)
-            } catch (error) {
-                 setError(error || 'failed to fetch data')
-            }
-            finally {
-                setLoader(false);
-            }
+        if (response.status !== 200) {
+          throw new Error(`Unexpected status code: ${response.status}`);
         }
-        fetchData(base_URL)
-    }, [])
 
-    return [loader, error, data];
+        // Handle null or empty response
+        if (!response.data) {
+          throw new Error("No data found (possibly user not in DB)");
+        }
+
+        setData(response.data);
+      } catch (err) {
+        setError(
+          err.response?.status === 404
+            ? "User not found."
+            : err.message || "Failed to fetch data"
+        );
+        setData(null); // Reset data if error occurs
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    if (base_URL) {
+      fetchData(base_URL);
+    }
+  }, [base_URL]);
+
+  return [loader, error, data];
 };
-export default useFetchData
 
-
-
+export default useFetchData;

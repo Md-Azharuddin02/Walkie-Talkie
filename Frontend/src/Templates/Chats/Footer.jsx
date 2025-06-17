@@ -2,13 +2,13 @@ import React, { useContext, useState } from 'react';
 import { FiPlus, FiSmile, FiMic } from 'react-icons/fi';
 import { IoMdSend } from "react-icons/io";
 import io from 'socket.io-client';
+import { Store } from '../../Store/Store';
 
 const socket = io('http://localhost:5803');
 
-
-
 const Footer = () => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState([]);
+  const { user } = useContext(Store);
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -20,7 +20,12 @@ const Footer = () => {
     e.preventDefault();
     if (message.trim()) {
       try {
-        socket.emit('sendMessage',  {text: message});
+        socket.emit('sendMessage',  {
+          userId: user._id,
+          toUserId: 'ICs3wiC70dw6BwRvAAIV',
+          fromUserId: socket.id,
+          message,
+        });
         setMessage('');
       }
       catch (error) {
