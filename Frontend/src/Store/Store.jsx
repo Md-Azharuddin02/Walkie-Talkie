@@ -33,7 +33,6 @@ export const StoreProvider = ({ children }) => {
       throw error;  // Re-throw to allow handling in the calling component
     }
   };
-  console.log('user:', user);
   // Memoize the context value to prevent unnecessary re-renders
   const contextValue = useMemo(
     () => ({ 

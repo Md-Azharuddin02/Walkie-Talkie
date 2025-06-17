@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { FiEdit2 } from "react-icons/fi";
 import { AiOutlineCheck } from "react-icons/ai";
 
-const ProfileName = ({updateProfile, setUpdateProfile}) => {
+const ProfileName = ({updateProfile, setUpdateProfile, user}) => {
   const [edit, setEdit] = useState(false);
   const [name, setName] = useState("");
+  console.log("user:", user);
 
 
 const handleSave= ()=>{
@@ -39,7 +40,7 @@ return (
         </div>
       ) : (
         <div className="flex items-left overflow-hidden justify-between w-full p-2">
-          <p className="text-sm font-normal text-wrap text-black">{updateProfile.name}</p>
+          <p className="text-sm font-normal text-wrap text-black">{user.name}</p>
           <FiEdit2
             className="text-gray-500 cursor-pointer"
             onClick={() => setEdit(true)}

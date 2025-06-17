@@ -3,22 +3,20 @@ import React, { useState } from "react";
 import ProfileImage from "./Profile/ProfileImage";
 import ProfileName from "./Profile/Username";
 import ProfileAbout from "./Profile/About";
+import {Store } from "../../Store/Store";
 
 export default function ProfileCard() {
-  // (1) Keep a File | null for the actual file
+  const { user } = React.useContext(Store);
   const [profileFile, setProfileFile] = useState(null);
 
-  // (2) Keep name + about in a single object
   const [updateProfile, setUpdateProfile] = useState({
     name: "",
     about: "Hey there! I am using Walkie-Talkie",
   });
 
-  // (3) Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    // 1. Must have selected a File before submitting
     if (!profileFile) {
       alert("Please select a profile image first.");
       return;
@@ -36,8 +34,6 @@ export default function ProfileCard() {
       const response = await fetch("/api/update-profile", {
         method: "POST",
         body: formData,
-        // NOTE: Do NOT set Content-Type manually! Let the browser set
-        //      "multipart/form-data; boundary=----..."
       });
 
       if (!response.ok) {
@@ -76,6 +72,7 @@ export default function ProfileCard() {
       <ProfileName
         updateProfile={updateProfile}
         setUpdateProfile={setUpdateProfile}
+        user={user}
       />
       <ProfileAbout
         updateProfile={updateProfile}
