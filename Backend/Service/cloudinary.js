@@ -1,42 +1,44 @@
 import { v2 as cloudinary } from "cloudinary";
 
-(async function () {
-  // Configuration
-  cloudinary.config({
-    cloud_name: "dkztx1nw9",
-    api_key: "255743533896681",
-    api_secret: "<your_api_secret>", // Click 'View API Keys' above to copy your API secret
-  });
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.Cloud_name,
+  api_key: process.env.Api_key,
+  api_secret: process.env.Api_secret,
+});
 
-  // Upload an image
-  const uploadResult = await cloudinary.uploader
-    .upload(
-      "https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg",
-      {
-        public_id: "shoes",
-      }
-    )
-    .catch((error) => {
-      console.log(error);
+async function uploadOnCloudinary(img, name) {
+  const timestamp = Date.now();
+  const publicId = `${name}-${timestamp}`;
+  try {
+    // Upload an image
+    const uploadResult = await cloudinary.uploader.upload(img,
+      { public_id: publicId}
+    );
+
+    console.log("Upload result:", uploadResult);
+
+    // Optimized image URL
+    const optimizeUrl = cloudinary.url(publicId, {
+      fetch_format: "auto",
+      quality: "auto",
     });
+    console.log("Optimized URL:", optimizeUrl);
 
-  console.log(uploadResult);
+    // Auto-cropped square transformation
+    const autoCropUrl = cloudinary.url(publicId, {
+      crop: "auto",
+      gravity: "auto",
+      width: 500,
+      height: 500,
+    });
+    console.log("Auto-Cropped URL:", autoCropUrl);
 
-  // Optimize delivery by resizing and applying auto-format and auto-quality
-  const optimizeUrl = cloudinary.url("shoes", {
-    fetch_format: "auto",
-    quality: "auto",
-  });
+    return { uploadResult, optimizeUrl, autoCropUrl };
+  } catch (error) {
+    console.error("Cloudinary upload error:", error);
+    throw error;
+  }
+}
 
-  console.log(optimizeUrl);
-
-  // Transform the image: auto-crop to square aspect_ratio
-  const autoCropUrl = cloudinary.url("shoes", {
-    crop: "auto",
-    gravity: "auto",
-    width: 500,
-    height: 500,
-  });
-
-  console.log(autoCropUrl);
-})();
+export {uploadOnCloudinary };

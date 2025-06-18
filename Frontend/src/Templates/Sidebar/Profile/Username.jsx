@@ -16,7 +16,7 @@ const ProfileName = ({ updateProfile, setUpdateProfile, user }) => {
 
   const handleEditStart = () => {
     setEdit(true);
-    setName(user?.name || "");
+    setName(user?.name );
   };
 
   return (

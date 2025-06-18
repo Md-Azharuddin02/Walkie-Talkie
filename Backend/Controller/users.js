@@ -9,7 +9,7 @@ async function getUser(req, res) {
   try {
     const user = await UserModel
       .findById(userId)
-      .select('name email phoneNumber profileImage status, about') // only what you need
+      .select('name email phoneNumber profileImage status, aboutStatus') // only what you need
       .lean()       // returns a plain JS object, faster than a Mongoose doc
       .exec();
 
@@ -70,6 +70,7 @@ const getUserProfile = async (req, res) => {
 };
 
 // ─── UPDATE PROFILE (name, about, + image upload) ────────────────────────────────
+const {uploadOnCloudinary} = require("../Service/cloudinary");
 const updateProfile = async (req, res) => {
   const { _id: userId } = req.user;
   const { name, about } = req.body; // renamed field
@@ -96,7 +97,8 @@ const updateProfile = async (req, res) => {
     user.name = name;
     user.aboutStatus = about;
     if (profileImagePath) {
-      user.profileImage = profileImagePath;
+      const cloudinaryResponse = await uploadOnCloudinary(profileImagePath, user.name);
+      user.profileImage = cloudinaryResponse.autoCropUrl;
     }
 
     await user.save();
