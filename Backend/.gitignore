@@ -1,0 +1,40 @@
+# Node.js dependencies
+node_modules/
+
+# Build and dist files
+build/
+dist/
+
+# Log files
+logs/
+*.log
+
+# Config files
+config.json
+config.js
+
+# Database files
+database.db
+*.sqlite
+
+# Uploads folder
+uploads/
+
+# .env file
+.env
+
+# IDE and editor files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Other files
+coverage/
+*.tmp
+*.bak
+*.swp
+*.swo
