@@ -1,7 +1,6 @@
 const UserModel = require("../Model/Users");
 const { getSecret, generateOTP, verifyOTP } = require("./generateOtp");
 const { generateToken } = require("../Service/authentication");
-const { getIO } = require('../Service/socket');
 
 
 async function handleGetOtp(req, res) {
@@ -46,7 +45,6 @@ async function handleGetOtp(req, res) {
 }
 async function handleVerifyOtp(req, res) {
   const { phoneNumber, otp, socketId} = req.body;
-  console.log("socketId:", socketId);
   if (!phoneNumber || !otp) {
     return res.status(400).json({
       success: false,
@@ -54,7 +52,7 @@ async function handleVerifyOtp(req, res) {
     });
   }
   try {
-    const user = await UserModel.findOne({ phoneNumber });
+    const user = await UserModel.findOne({ phoneNumber })
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -73,9 +71,7 @@ async function handleVerifyOtp(req, res) {
           },
           $set: { status: 'online' }
         },
-        { new: true }
       );
-
       await user.save();
       const token = generateToken(user);
       

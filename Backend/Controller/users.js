@@ -9,14 +9,13 @@ async function getUser(req, res) {
   try {
     const user = await UserModel
       .findById(userId)
-      .select('name email phoneNumber profileImage status') // only what you need
+      .select('name email phoneNumber profileImage status, about') // only what you need
       .lean()       // returns a plain JS object, faster than a Mongoose doc
       .exec();
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
     return res.status(200).json(user);
   } catch (err) {
     console.error('Error in getUser:', err);
@@ -31,6 +30,7 @@ async function addUser(req, res) {
   try {
     const newUser = new UserModel(user);
     await newUser.save();
+    console.log("User added:", newUser);
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: "Failed to add user" });
@@ -71,19 +71,52 @@ const getUserProfile = async (req, res) => {
 
 // ─── UPDATE PROFILE (name, about, + image upload) ────────────────────────────────
 const updateProfile = async (req, res) => {
-  // Because we used upload.single("image") above, Multer has populated:
-  //   • req.file → file info (with .path, .originalname, .mimetype, etc.)
-  //   • req.body → text fields ("name", "about")
-  const { name, about } = req.body;
-  const profileImagePath = req.file?.path; // e.g. "server/uploads/1629032893456.png"
+  const { _id: userId } = req.user;
+  const { name, about } = req.body; // renamed field
+  const profileImagePath = req.file?.path;
 
+  // Validate inputs
+  if (!name || !about) {
+    return res.status(400).json({
+      success: false,
+      error: "Name and aboutStatus are required",
+    });
+  }
 
-  // TODO: save these into your MongoDB user document. For now, return them:
-  return res.status(200).json({
-    success: true,
-    message: "Profile updated successfully",
-    data: { name, about, imagePath: profileImagePath },
-  });
+  try {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    user.name = name;
+    user.aboutStatus = about;
+    if (profileImagePath) {
+      user.profileImage = profileImagePath;
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: {
+        name: user.name,
+        aboutStatus: user.aboutStatus,
+        profileImage: user.profileImage,
+      },
+    });
+  } catch (err) {
+    console.error("Profile update error:", err);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
 };
 
 module.exports = {

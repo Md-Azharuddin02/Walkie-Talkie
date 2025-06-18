@@ -6,6 +6,7 @@ const authenticate = (req, res, next) => {
         return res.status(401).json({ message: "Unauthorized not found" });
     }
     const user = verifyToken(token);
+
     if (!user) {
         return res.status(401).json({ message: "Unauthorized user not found" });
     }

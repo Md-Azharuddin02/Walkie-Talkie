@@ -43,7 +43,7 @@ router.post("/user", addUser);
 
 // POST /api/update-profile → update name/about + one image
 //   • “upload.single('image')” must come before your controller
-router.post("/update-profile", upload.single("image"), updateProfile);
+router.post("/update-profile",authenticate, upload.single("image"), updateProfile);
 
 // You can put OTP routes or other protected routes here:
 router.post("/auth/send-otp", handleGetOtp);

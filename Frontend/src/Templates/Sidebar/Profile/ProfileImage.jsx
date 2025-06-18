@@ -1,24 +1,23 @@
 // client/src/components/ProfileImage.jsx
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, user } from "react";
+import dummy from "../../../assets/images/dummy.avif";
 
 /**
  * Props:
  *   • profileFile: File | null       ← the actual File object (to append to FormData)
  *   • setProfileFile: (file: File)   ← setter for the File object
- * 
+ *
  * We also keep a “previewUrl” for displaying the chosen image.
  */
 const ProfileImage = ({ profileFile, setProfileFile }) => {
   const fileInputRef = useRef(null);
-  const [previewUrl, setPreviewUrl] = useState(
-    "/default_user_dummy.png" // replace with your dummy asset path
-  );
+  const [previewUrl, setPreviewUrl] = useState(dummy);
 
   // Whenever `profileFile` changes, generate a preview URL:
   useEffect(() => {
     if (!profileFile) {
       // Reset to default if no file
-      setPreviewUrl("/default_user_dummy.png");
+      setPreviewUrl(dummy);
       return;
     }
     // Create an object URL for preview
@@ -44,7 +43,7 @@ const ProfileImage = ({ profileFile, setProfileFile }) => {
   return (
     <div className="flex justify-center mt-4">
       <img
-        src={previewUrl}
+        src={user?.ProfileImage || previewUrl}
         alt="Profile"
         className="w-32 h-32 rounded-full object-cover cursor-pointer"
         onClick={handleImageClick}

@@ -1,4 +1,5 @@
-import React, { createContext, useState, useMemo } from 'react';
+import { set } from 'mongoose';
+import React, { createContext, useState, useMemo, useEffect } from 'react';
 
 export const Store = createContext();
 
@@ -8,6 +9,22 @@ export const StoreProvider = ({ children }) => {
   const [user, setUser] = useState();
 
   // Add a new user to the database and update the UI
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/user', {
+          credentials: 'include'  // Added to include cookies if using sessions
+        });
+        const userData = await response.json();
+        setUser(userData);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    fetchUser();
+  }, [setUser]);
+
+
   const addUser = async (newUser) => {
     try {
       const response = await fetch('/api/users', {

@@ -1,20 +1,18 @@
 // client/src/components/ProfileCard.jsx
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import ProfileImage from "./Profile/ProfileImage";
 import ProfileName from "./Profile/Username";
 import ProfileAbout from "./Profile/About";
-import {Store } from "../../Store/Store";
+import { Store } from "../../Store/Store";
 
 export default function ProfileCard() {
-  const { user } = React.useContext(Store);
+  const {user, setUser}= useContext(Store);
   const [profileFile, setProfileFile] = useState(null);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [updateProfile, setUpdateProfile] = useState({
     name: "",
-    about: "Hey there! I am using Walkie-Talkie",
+    about: "",
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     if (!profileFile) {
@@ -26,10 +24,9 @@ export default function ProfileCard() {
 
     try {
       const formData = new FormData();
-      formData.append("name", updateProfile.name);
-      formData.append("about", updateProfile.about);
-      // append the actual File object, not a base64 string:
-      formData.append("image", profileFile);
+      formData.set("name", updateProfile.name);
+      formData.set("about", updateProfile.about);
+      formData.set("image", profileFile);
 
       const response = await fetch("/api/update-profile", {
         method: "POST",
@@ -39,51 +36,49 @@ export default function ProfileCard() {
       if (!response.ok) {
         throw new Error(`Server responded with status ${response.status}`);
       }
-
       const data = await response.json();
-      console.log("Profile updated successfully:", data);
-
-      // You could show a “Success” UI here if you want
+      alert("Profile updated successfully!");
+      setUser(data)
     } catch (err) {
-      console.error("Error updating profile:", err);
+      console.error("❌ Update failed:", err);
       alert("Update failed: " + err.message);
     } finally {
-      // (4) Reset form if you want:
-      setUpdateProfile({
-        name: "",
-        about: "Hey there! I am using Walkie-Talkie",
-      });
-      setProfileFile(null);
+     
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="ml-3 w-full h-full bg-gray-100 max-w-md mx-auto py-10 flex flex-col gap-7 border-l-1 border-gray-300">
+    <div className="ml-3 w-full h-full bg-gray-100 max-w-md mx-auto py-10 flex flex-col gap-7 border-l border-gray-300">
       <h2 className="text-2xl font-semibold text-left mb-4 ml-5">Profile</h2>
 
-      {/* (1) ProfileImage receives and sets the actual File object */}
       <ProfileImage
         profileFile={profileFile}
         setProfileFile={setProfileFile}
+        user={user}
+
       />
 
-      {/* (2) Text fields */}
       <ProfileName
         updateProfile={updateProfile}
         setUpdateProfile={setUpdateProfile}
         user={user}
       />
+
       <ProfileAbout
         updateProfile={updateProfile}
         setUpdateProfile={setUpdateProfile}
+        user={user} 
+
       />
 
       <div className="w-full py-3 flex justify-center">
         <button
-          className="w-1/2 py-3 bg-green-800 text-sky-50 rounded-md"
+          type="button"
+          className="w-1/2 py-3 bg-green-800 text-white rounded-md disabled:opacity-60 cursor-pointer"
           onClick={handleSubmit}
           disabled={isSubmitting}
+          aria-busy={isSubmitting}
         >
           {isSubmitting ? "Updating..." : "Update"}
         </button>

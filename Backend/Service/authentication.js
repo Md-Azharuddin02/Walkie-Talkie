@@ -5,7 +5,10 @@ const generateToken = (user) => {
     const payload = {
         _id: user._id.toString(),
         phoneNumber: user.phoneNumber,
-        name: user.name
+        name: user.name,
+        profileImage: user.profileImage,
+        status: user.status,
+        aboutStatus: user.aboutStatus,
     }
     if (!process.env.JWT_SECRET) {
         throw new Error("JWT_SECRET is not defined");
