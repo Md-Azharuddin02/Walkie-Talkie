@@ -9,7 +9,7 @@ async function getUser(req, res) {
   try {
     const user = await UserModel
       .findById(userId)
-      .select('name email phoneNumber profileImage status, about') // only what you need
+      .select('name email phoneNumber profileImage status, aboutStatus') // only what you need
       .lean()       // returns a plain JS object, faster than a Mongoose doc
       .exec();
 
