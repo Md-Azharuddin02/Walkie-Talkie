@@ -6,7 +6,7 @@ import ProfileAbout from "./Profile/About";
 import { Store } from "../../Store/Store";
 
 export default function ProfileCard() {
-  const {user, setUser}= useContext(Store);
+  const { user } = useContext(Store);
   const [profileFile, setProfileFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [updateProfile, setUpdateProfile] = useState({
@@ -15,18 +15,14 @@ export default function ProfileCard() {
   });
 
   const handleSubmit = async () => {
-    if (!profileFile) {
-      alert("Please select a profile image first.");
-      return;
-    }
-
     setIsSubmitting(true);
-
     try {
       const formData = new FormData();
-      formData.set("name", updateProfile.name);
-      formData.set("about", updateProfile.about);
-      formData.set("image", profileFile);
+      formData.set("name", updateProfile.name || user.name);
+      formData.set("about", updateProfile.about || user.aboutStatus);
+      if (profileFile) {
+        formData.set("image", profileFile);
+      }
 
       const response = await fetch("/api/update-profile", {
         method: "POST",
@@ -34,16 +30,16 @@ export default function ProfileCard() {
       });
 
       if (!response.ok) {
-        throw new Error(`Server responded with status ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
       }
+
       const data = await response.json();
       alert("Profile updated successfully!");
-      setUser(data)
     } catch (err) {
       console.error("❌ Update failed:", err);
       alert("Update failed: " + err.message);
     } finally {
-     
       setIsSubmitting(false);
     }
   };
@@ -56,7 +52,6 @@ export default function ProfileCard() {
         profileFile={profileFile}
         setProfileFile={setProfileFile}
         user={user}
-
       />
 
       <ProfileName
@@ -68,8 +63,7 @@ export default function ProfileCard() {
       <ProfileAbout
         updateProfile={updateProfile}
         setUpdateProfile={setUpdateProfile}
-        user={user} 
-
+        user={user}
       />
 
       <div className="w-full py-3 flex justify-center">

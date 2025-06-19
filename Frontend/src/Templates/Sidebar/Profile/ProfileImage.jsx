@@ -1,49 +1,39 @@
-// client/src/components/ProfileImage.jsx
-import React, { useRef, useState, useEffect, user } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import dummy from "../../../assets/images/dummy.avif";
 
-/**
- * Props:
- *   • profileFile: File | null       ← the actual File object (to append to FormData)
- *   • setProfileFile: (file: File)   ← setter for the File object
- *
- * We also keep a “previewUrl” for displaying the chosen image.
- */
-const ProfileImage = ({ profileFile, setProfileFile }) => {
+const ProfileImage = ({ profileFile, setProfileFile, user }) => {
   const fileInputRef = useRef(null);
   const [previewUrl, setPreviewUrl] = useState(dummy);
 
-  // Whenever `profileFile` changes, generate a preview URL:
   useEffect(() => {
-    if (!profileFile) {
-      // Reset to default if no file
-      setPreviewUrl(dummy);
+    if (!profileFile || !(profileFile instanceof File)) {
+      setPreviewUrl(user?.profileImage || dummy);
       return;
     }
-    // Create an object URL for preview
+
     const objectUrl = URL.createObjectURL(profileFile);
     setPreviewUrl(objectUrl);
 
-    // Revoke on cleanup (avoid memory leaks)
     return () => URL.revokeObjectURL(objectUrl);
-  }, [profileFile]);
+  }, [profileFile, user]);
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files && e.target.files[0];
+    const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      // Store the actual File object in state
       setProfileFile(file);
+    } else {
+      alert("Please select a valid image file.");
     }
   };
 
   return (
     <div className="flex justify-center mt-4">
       <img
-        src={user?.ProfileImage || previewUrl}
+        src={previewUrl}
         alt="Profile"
         className="w-32 h-32 rounded-full object-cover cursor-pointer"
         onClick={handleImageClick}

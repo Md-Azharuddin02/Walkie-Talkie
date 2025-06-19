@@ -1,4 +1,4 @@
-import img from '.././assets/images/img.jpg';
+import img from '.././assets/images/dummy.avif';
 
 export const chats = [
     { id: 1, name: 'CO-FOUNDER', time: '3:44 pm', avatar: img },

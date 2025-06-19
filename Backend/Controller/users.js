@@ -30,7 +30,6 @@ async function addUser(req, res) {
   try {
     const newUser = new UserModel(user);
     await newUser.save();
-    console.log("User added:", newUser);
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: "Failed to add user" });
@@ -70,13 +69,14 @@ const getUserProfile = async (req, res) => {
 };
 
 // ─── UPDATE PROFILE (name, about, + image upload) ────────────────────────────────
+const {uploadOnCloudinary} = require("../Service/cloudinary");
 const updateProfile = async (req, res) => {
   const { _id: userId } = req.user;
   const { name, about } = req.body; // renamed field
   const profileImagePath = req.file?.path;
 
   // Validate inputs
-  if (!name || !about) {
+  if (!name || !about ) {
     return res.status(400).json({
       success: false,
       error: "Name and aboutStatus are required",
@@ -96,7 +96,8 @@ const updateProfile = async (req, res) => {
     user.name = name;
     user.aboutStatus = about;
     if (profileImagePath) {
-      user.profileImage = profileImagePath;
+      const cloudinaryResponse = await uploadOnCloudinary(profileImagePath, user.name);
+      user.profileImage = cloudinaryResponse.autoCropUrl;
     }
 
     await user.save();
