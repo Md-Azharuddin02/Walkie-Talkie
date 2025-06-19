@@ -30,7 +30,6 @@ async function addUser(req, res) {
   try {
     const newUser = new UserModel(user);
     await newUser.save();
-    console.log("User added:", newUser);
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: "Failed to add user" });
@@ -77,7 +76,7 @@ const updateProfile = async (req, res) => {
   const profileImagePath = req.file?.path;
 
   // Validate inputs
-  if (!name || !about) {
+  if (!name || !about ) {
     return res.status(400).json({
       success: false,
       error: "Name and aboutStatus are required",

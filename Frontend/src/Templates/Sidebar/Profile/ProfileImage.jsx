@@ -1,5 +1,4 @@
-// client/src/components/ProfileImage.jsx
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import dummy from "../../../assets/images/dummy.avif";
 
 const ProfileImage = ({ profileFile, setProfileFile, user }) => {
@@ -7,8 +6,8 @@ const ProfileImage = ({ profileFile, setProfileFile, user }) => {
   const [previewUrl, setPreviewUrl] = useState(dummy);
 
   useEffect(() => {
-    if (!profileFile) {
-      setPreviewUrl(dummy);
+    if (!profileFile || !(profileFile instanceof File)) {
+      setPreviewUrl(user?.profileImage || dummy);
       return;
     }
 
@@ -16,25 +15,25 @@ const ProfileImage = ({ profileFile, setProfileFile, user }) => {
     setPreviewUrl(objectUrl);
 
     return () => URL.revokeObjectURL(objectUrl);
-  }, [profileFile]);
+  }, [profileFile, user]);
 
-  const handleImageClick = useCallback(() => {
+  const handleImageClick = () => {
     fileInputRef.current?.click();
-  }, []);
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    if (file?.type?.startsWith("image/")) {
+    if (file && file.type.startsWith("image/")) {
       setProfileFile(file);
+    } else {
+      alert("Please select a valid image file.");
     }
   };
-
-  const imageSrc = user?.profileImage || previewUrl;
 
   return (
     <div className="flex justify-center mt-4">
       <img
-        src={imageSrc}
+        src={previewUrl}
         alt="Profile"
         className="w-32 h-32 rounded-full object-cover cursor-pointer"
         onClick={handleImageClick}

@@ -16,14 +16,12 @@ async function uploadOnCloudinary(img, name) {
       { public_id: publicId}
     );
 
-    console.log("Upload result:", uploadResult);
 
     // Optimized image URL
     const optimizeUrl = cloudinary.url(publicId, {
       fetch_format: "auto",
       quality: "auto",
     });
-    console.log("Optimized URL:", optimizeUrl);
 
     // Auto-cropped square transformation
     const autoCropUrl = cloudinary.url(publicId, {
@@ -32,7 +30,6 @@ async function uploadOnCloudinary(img, name) {
       width: 500,
       height: 500,
     });
-    console.log("Auto-Cropped URL:", autoCropUrl);
 
     return { uploadResult, optimizeUrl, autoCropUrl };
   } catch (error) {

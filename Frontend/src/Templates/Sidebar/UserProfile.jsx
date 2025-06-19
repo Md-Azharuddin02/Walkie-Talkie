@@ -6,7 +6,7 @@ import ProfileAbout from "./Profile/About";
 import { Store } from "../../Store/Store";
 
 export default function ProfileCard() {
-  const { user, setUser } = useContext(Store);
+  const { user } = useContext(Store);
   const [profileFile, setProfileFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [updateProfile, setUpdateProfile] = useState({
@@ -36,7 +36,6 @@ export default function ProfileCard() {
 
       const data = await response.json();
       alert("Profile updated successfully!");
-      setUser(data);
     } catch (err) {
       console.error("❌ Update failed:", err);
       alert("Update failed: " + err.message);
