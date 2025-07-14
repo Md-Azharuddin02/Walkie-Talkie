@@ -72,5 +72,5 @@ module.exports = { io };
 // ─── Start Listening ─────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5804;
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT} (${process.env.NODE_ENV})`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });

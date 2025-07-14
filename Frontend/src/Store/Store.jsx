@@ -1,11 +1,10 @@
-import { set } from 'mongoose';
 import React, { createContext, useState, useMemo, useEffect } from 'react';
 
 export const Store = createContext();
 
 export const StoreProvider = ({ children }) => {
   const [isCardOpen, setIsCardOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('contacts');
+  const [activeTab, setActiveTab] = useState('taskList');
   const [user, setUser] = useState();
 
   // Add a new user to the database and update the UI

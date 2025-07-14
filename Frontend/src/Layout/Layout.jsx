@@ -5,6 +5,8 @@ import ChatLayout from '../Templates/Chats/ChatLayout';
 import UserProfile from '../Templates/Sidebar/UserProfile';
 import Settings from '../Templates/Sidebar/Setting';
 import { Store } from '../Store/Store';
+import TaskList from '../Services/LLM GPT/GPTComponents/TaskList';
+import GPTLayout from '../Services/LLM GPT/GPT Layout/GPTLayout';
 
 const Layout = () => {
   const { activeTab } = useContext(Store);
@@ -12,7 +14,8 @@ const Layout = () => {
   const tabComponents = useMemo(() => ({
     contacts: <UsersList />,
     profile: <UserProfile />,
-    settings: <Settings />
+    settings: <Settings />,
+    taskList: < TaskList/>
   }), []);
 
   return (
@@ -29,7 +32,7 @@ const Layout = () => {
 
       {/* Chat Area */}
       <div className="flex-1 h-full overflow-hidden">
-        <ChatLayout />
+        {activeTab === 'taskList' ? <GPTLayout /> : <ChatLayout />}
       </div>
     </div>
   );

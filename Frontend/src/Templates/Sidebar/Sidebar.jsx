@@ -49,8 +49,8 @@ const Sidebar = () => {
     { icon: FaEnvelope, badge: { content: "1", color: "blue" }, onClick: () => setActiveTab("contacts") },
     { icon: FaBell, badge: { color: "green" } },
     { icon: FaComment, badge: { color: "green" } },
-    { icon: FaUsers },
-    { icon: FaCircle, color: "blue" },
+    { icon: FaUsers, },
+    { icon: FaCircle, color: "blue"  , onClick: () => setActiveTab("taskList") },
   ];
 
   const bottomIcons = [

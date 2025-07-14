@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5803");
+const socket = io("http://localhost:5804");
 
 const styles = {
   wrapper: {
@@ -154,7 +154,7 @@ function Register() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5803/api/auth/send-otp",
+        "/api/auth/send-otp",
         {
           phoneNumber: phone,
         }
@@ -187,7 +187,7 @@ function Register() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5803/api/auth/verify-otp",
+        "api/auth/verify-otp",
         {
           phoneNumber: phone,
           otp: otpValue,
