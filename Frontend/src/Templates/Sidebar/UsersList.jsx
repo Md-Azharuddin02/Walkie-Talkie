@@ -83,7 +83,7 @@ const UsersList = () => {
         </div>
 
         {/* Chat List with Custom Scrollbar */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 overflow-y-auto">
           {
             loader ? (
               <Loader />

@@ -31,7 +31,7 @@ const Layout = () => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 h-full overflow-hidden">
+      <div className="flex-1 h-full overflow-hidden bg-gray-200">
         {activeTab === 'taskList' ? <GPTLayout /> : <ChatLayout />}
       </div>
     </div>

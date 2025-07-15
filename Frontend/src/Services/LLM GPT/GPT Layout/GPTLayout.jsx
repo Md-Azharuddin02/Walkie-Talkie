@@ -1,17 +1,18 @@
-import React from "react";
-import GPTSideBar from "../GPTComponents/GPTSideBar";
+import React, { useState } from "react";
+import GetResponse from "../GPTComponents/GetResponse";
 import GPTHeader from "../GPTComponents/GPTHeader";
 import GetPrompt from "../GPTComponents/GetPrompt";
-import GetResponse from "../GPTComponents/GetResponse";
-import ErrorBoundary from "../../../Components/ErrorBoundary"
 
 export default function GPTLayout() {
+  const [botMessage, setBotMessage] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
-    <div className="flex h-screen bg-black text-white font-sans">
-      <main className="flex-1 flex flex-col items-center justify-center text-center">
-          <GPTHeader />
-          <GetResponse />
-          <GetPrompt />
+    <div className="w-full flex flex-col h-screen text-black font-sans">
+      <main className="flex flex-col justify-between flex-1 w-full max-w-3xl mx-auto">
+        <GPTHeader />
+        <GetResponse botMessage={botMessage} isLoading={isLoading} />
+        <GetPrompt setBotMessage={setBotMessage} setIsLoading={setIsLoading} />
       </main>
     </div>
   );

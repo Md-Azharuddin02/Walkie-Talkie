@@ -20,7 +20,6 @@ const ChatContent = () => {
     };
   }, []);
 
-  // Scroll to the bottom every time messages update
   useEffect(() => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
