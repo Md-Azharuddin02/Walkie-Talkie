@@ -1,37 +1,61 @@
 import React from "react";
-import { FaThumbsUp, FaThumbsDown, FaRegCopy, FaRedo } from "react-icons/fa";
+import { FaRegCopy, FaThumbsUp, FaThumbsDown, FaRedo } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
+// Optimized icon component to reduce repetition
+const ActionIcon = ({ Icon, hoverColor = "hover:text-gray-700", onClick }) => (
+  <Icon 
+    className={`w-6 h-6 cursor-pointer ${hoverColor} transition-colors p-1 rounded hover:bg-gray-200`}
+    onClick={onClick}
+  />
+);
 
-export default function ChatMessage({ message, type }) {
+export default function ChatMessage({ type, message }) {
   const isPrompt = type === "prompt";
 
+  // Memoized class strings
+  const containerClasses = `w-full px-4 mb-4 flex ${isPrompt ? "justify-end" : "justify-start"}`;
+  const messageClasses = `rounded-2xl px-4 py-3 text-sm break-words ${
+    isPrompt ? "bg-slate-700 text-white" : "bg-gray-100 text-gray-900"
+  }`;
+
+  // Icon configurations
+  const promptIcons = [
+    { Icon: FaRegCopy, hoverColor: "hover:text-red-700" },
+    { Icon: MdDelete, hoverColor: "hover:text-gray-700" }
+  ];
+
+  const responseIcons = [
+    { Icon: FaThumbsUp, hoverColor: "hover:text-gray-700" },
+    { Icon: FaThumbsDown, hoverColor: "hover:text-gray-700" },
+    { Icon: FaRegCopy, hoverColor: "hover:text-gray-700" },
+    { Icon: FaRedo, hoverColor: "hover:text-gray-700" }
+  ];
+
+  const icons = isPrompt ? promptIcons : responseIcons;
+
   return (
-    <div className={`w-full px-4 mb-4 flex ${isPrompt ? "justify-end" : "justify-start"}`}>
-      <div className="max-w-[80%] md:max-w-80%]">
+    <div className={containerClasses}>
+      <div className="max-w-[80%] md:max-w-[80%]">
         <div
-          className={`rounded-2xl px-4 py-2 text-sm break-words ${
-            isPrompt ? "bg-slate-700 text-white" : "bg-gray-100 text-gray-900"
-          }`}
+          className={messageClasses}
           dangerouslySetInnerHTML={{
             __html: isPrompt ? message.prompt : message.response,
           }}
         />
-
-        <div className="flex items-center gap-3 text-xs text-gray-500 mt-1 pl-2">
-          {isPrompt ? (
-            <>
-              <FaRegCopy className="cursor-pointer hover:text-black" />
-              <MdDelete className="cursor-pointer hover:text-black" />
-            </>
-          ) : (
-            <>
-              <FaThumbsUp className="cursor-pointer hover:text-black" />
-              <FaThumbsDown className="cursor-pointer hover:text-black" />
-              <FaRegCopy className="cursor-pointer hover:text-black" />
-              <FaRedo className="cursor-pointer hover:text-black" />
-            </>
-          )}
+        
+        <div className="flex items-center gap-3 text-gray-500 mt-2 px-1">
+          {icons.map(({ Icon, hoverColor }, index) => (
+            <ActionIcon
+              key={index}
+              Icon={Icon}
+              hoverColor={hoverColor}
+              onClick={() => {
+                // Add your click handlers here
+                console.log(`${Icon.name} clicked`);
+              }}
+            />
+          ))}
         </div>
       </div>
     </div>

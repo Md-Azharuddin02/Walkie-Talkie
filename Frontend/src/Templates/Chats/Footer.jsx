@@ -4,7 +4,7 @@ import { IoMdSend } from "react-icons/io";
 import io from 'socket.io-client';
 import { Store } from '../../Store/Store';
 
-const socket = io('http://localhost:5803');
+const socket = io('http://localhost:5804');
 
 const Footer = () => {
   const [message, setMessage] = useState([]);

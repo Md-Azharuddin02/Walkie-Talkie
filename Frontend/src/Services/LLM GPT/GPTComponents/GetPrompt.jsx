@@ -50,8 +50,8 @@ const handleSendMessage = async (e) => {
   };
 
   return (
-    <div className="px-4 py-3 border-t border-gray-200 w-full position-fix bottom-0">
-      <div className="flex items-center border border-gray-300 rounded-full px-4 py-2 bg-white max-w-3xl mx-auto">
+    <div className="sticky bottom-0 border-t border-gray-200 p-4">
+      <div className="flex items-center border border-gray-300 rounded-full px-4 py-3 bg-white shadow-sm">
         <input
           type="text"
           placeholder="Ask anything"
@@ -60,12 +60,16 @@ const handleSendMessage = async (e) => {
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
         />
-        <div className="flex items-center gap-3 text-gray-500">
-          <button onClick={handleSendMessage} className="cursor-pointer">
-            <IoIosSend />
+        <div className="flex items-center gap-3 text-gray-500 ml-2">
+          <button 
+            onClick={handleSendMessage} 
+            className="cursor-pointer hover:text-blue-500 transition-colors p-1"
+            disabled={!message.trim()}
+          >
+            <IoIosSend className="w-5 h-5" />
           </button>
-          <button className="cursor-pointer">
-            <FaMicrophone />
+          <button className="cursor-pointer hover:text-blue-500 transition-colors p-1">
+            <FaMicrophone className="w-4 h-4" />
           </button>
         </div>
       </div>

@@ -8,8 +8,8 @@ export default function GPTLayout() {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <div className="w-full flex flex-col h-screen text-black font-sans">
-      <main className="flex flex-col justify-between flex-1 w-full max-w-3xl mx-auto">
+     <div className="w-full h-screen flex flex-col text-black font-sans">
+      <main className="flex flex-col h-full w-full max-w-3xl mx-auto">
         <GPTHeader />
         <GetResponse botMessage={botMessage} isLoading={isLoading} />
         <GetPrompt setBotMessage={setBotMessage} setIsLoading={setIsLoading} />
