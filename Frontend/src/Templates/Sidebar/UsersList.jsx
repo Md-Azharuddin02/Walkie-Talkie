@@ -1,103 +1,76 @@
-import React, { useContext } from "react";
-import { FaPlus, FaEllipsisV } from "react-icons/fa";
-import Search from "../../Components/Search.jsx";
-import useFetchData from "../../Custom/fetchData";
-import User from "../../Components/User.jsx";
-import Loader from '../../Components/Loader.jsx';
+import React, { useContext,useState } from "react";
 import { Store } from "../../Store/Store";
+import {FiSearch} from 'react-icons/fi';
+import {FaPlus, FaEllipsisV, FaUser} from 'react-icons/fa';
 
-// Add this style block (you might want to move it to a separate CSS file)
-const styles = `
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 6px; /* Thinner scrollbar */
-  }
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Light gray track */
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #888; /* Scrollbar thumb color */
-    border-radius: 3px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Darker on hover */
-  }
-`;
+FaPlus
 
-// Reusable Icon Button Component
-const IconButton = ({ Icon, onClick }) => (
-  <Icon className="text-gray-600 cursor-pointer" onClick={onClick} />
-);
 
-// Reusable Filter Button Component
-const FilterButton = ({ label, isActive = false, onClick }) => {
-  const baseStyles = "px-4 py-1 rounded-full text-sm font-medium";
-  const activeStyles = isActive
-    ? "bg-green-100 text-green-600"
-    : "text-gray-600 hover:bg-gray-100";
-  return (
-    <button className={`${baseStyles} ${activeStyles}`} onClick={onClick}>
-      {label}
-    </button>
-  );
-};
 
-// Chat Item Component
-
-// Main ChatList Component
 const UsersList = () => {
-  const { user, isCardOpen, setIsCardOpen } = useContext(Store);
+  const { isCardOpen, setIsCardOpen } = useContext(Store);
   const filterOptions = ["ALL", "Unread", "Favourite", "Groups"];
-  const [loader, error, data] = useFetchData("api/user");
-
-
 
   return (
-    <>
-      <style>{styles}</style>
-      <div className="w-full h-full flex flex-col bg-white px-4">
-        {/* Header */}
-        <div className="flex justify-between items-center p-4">
-          <h1 className="text-3xl font-bold">Chats</h1>
-
-          <div className="flex space-x-3">
-            <IconButton
-              Icon={FaPlus}
-              onClick={() => setIsCardOpen(!isCardOpen)}
-            />
-            <IconButton Icon={FaEllipsisV} />
-          </div>
-        </div>
-
-        {/* Search Bar */}
-        <Search />
-
-        {/* Filter Tabs */}
-        <div className="flex space-x-2 px-4">
-          {filterOptions.map((option) => (
-            <FilterButton
-              key={option}
-              label={option}
-              isActive={option === "ALL"}
-            />
-          ))}
-        </div>
-
-        {/* Chat List with Custom Scrollbar */}
-        <div className="flex-1 overflow-y-auto">
-          {
-            loader ? (
-              <Loader />
-            ) : user && Array.isArray(user.friends) ? (
-              data.friends.map((u) => <User key={u._id} user={u} />)
-            ) : (
-              <p>No friends to display.</p>
-            )
-          }
-
+    <div className="w-full h-full flex flex-col bg-white">
+      {/* Header */}
+      <div className="flex justify-between items-center p-4 border-b border-gray-200">
+        <h1 className="text-xl lg:text-2xl font-bold">Chats</h1>
+        <div className="flex space-x-3">
+          <FaPlus className="text-gray-600 cursor-pointer text-lg" onClick={() => setIsCardOpen(!isCardOpen)} />
+          <FaEllipsisV className="text-gray-600 cursor-pointer text-lg" />
         </div>
       </div>
-    </>
+
+      {/* Search Bar */}
+      <div className="p-4">
+        <div className="relative">
+          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input 
+            type="text" 
+            placeholder="Search chats..." 
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          />
+        </div>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex space-x-2 px-4 mb-4 overflow-x-auto">
+        {filterOptions.map((option) => (
+          <button
+            key={option}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+              option === "ALL" ? "bg-green-100 text-green-600" : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+
+      {/* Chat List */}
+      <div className="flex-1 overflow-y-auto px-4">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <div key={i} className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+            <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
+              <FaUser className="text-gray-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">User {i}</p>
+              <p className="text-sm text-gray-500 truncate">Last message preview...</p>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-xs text-gray-500">12:30</span>
+              {i <= 3 && (
+                <span className="bg-blue-500 text-white text-xs rounded-full px-2 py-1 mt-1">
+                  {i}
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
-
 export default UsersList;

@@ -1,82 +1,54 @@
-// client/src/components/ProfileCard.jsx
-import React, { useContext, useState } from "react";
-import ProfileImage from "./Profile/ProfileImage";
-import ProfileName from "./Profile/Username";
-import ProfileAbout from "./Profile/About";
+import React, { useContext,useState } from "react";
 import { Store } from "../../Store/Store";
+import { FaUser } from "react-icons/fa";
 
-export default function ProfileCard() {
+
+const UserProfile = () => {
   const { user } = useContext(Store);
-  const [profileFile, setProfileFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [updateProfile, setUpdateProfile] = useState({
-    name: "",
-    about: "",
-  });
-
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-    try {
-      const formData = new FormData();
-      formData.set("name", updateProfile.name || user.name);
-      formData.set("about", updateProfile.about || user.aboutStatus);
-      if (profileFile) {
-        formData.set("image", profileFile);
-      }
-
-      const response = await fetch("/api/update-profile", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Server error: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      alert("Profile updated successfully!");
-    } catch (err) {
-      console.error("❌ Update failed:", err);
-      alert("Update failed: " + err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
-    <div className="ml-3 w-full h-full bg-gray-100 max-w-md mx-auto py-10 flex flex-col gap-7 border-l border-gray-300">
-      <h2 className="text-2xl font-semibold text-left mb-4 ml-5">Profile</h2>
+    <div className="w-full h-full bg-white overflow-y-auto">
+      <div className="p-6">
+        <h2 className="text-xl lg:text-2xl font-semibold mb-6">Profile</h2>
+        
+        {/* Profile Image */}
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+            <FaUser className="text-gray-600 text-2xl" />
+          </div>
+          <button className="text-blue-600 text-sm">Change Photo</button>
+        </div>
 
-      <ProfileImage
-        profileFile={profileFile}
-        setProfileFile={setProfileFile}
-        user={user}
-      />
-
-      <ProfileName
-        updateProfile={updateProfile}
-        setUpdateProfile={setUpdateProfile}
-        user={user}
-      />
-
-      <ProfileAbout
-        updateProfile={updateProfile}
-        setUpdateProfile={setUpdateProfile}
-        user={user}
-      />
-
-      <div className="w-full py-3 flex justify-center">
-        <button
-          type="button"
-          className="w-1/2 py-3 bg-green-800 text-white rounded-md disabled:opacity-60 cursor-pointer"
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          aria-busy={isSubmitting}
-        >
-          {isSubmitting ? "Updating..." : "Update"}
-        </button>
+        {/* Form Fields */}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+            <input 
+              type="text" 
+              defaultValue={user.name}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">About</label>
+            <textarea 
+              rows="3"
+              placeholder="Tell us about yourself..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          
+          <button 
+            className="w-full py-3 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Updating..." : "Update Profile"}
+          </button>
+        </div>
       </div>
     </div>
   );
-}
+};
+export default UserProfile;

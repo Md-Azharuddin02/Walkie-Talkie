@@ -1,108 +1,169 @@
-import React, { useState } from "react";
-import {
-  FiSearch,
-  FiUser,
-  FiLock,
-  FiMessageSquare,
-  FiBell,
-  // FiKeyboard,
-  FiHelpCircle,
-  FiLogOut,
-  FiPlay,
-} from "react-icons/fi";
+import React from 'react';
+import { 
+  Search, 
+  User, 
+  Shield, 
+  Lock, 
+  MessageCircle, 
+  Bell, 
+  Keyboard, 
+  HelpCircle, 
+  LogOut 
+} from 'lucide-react';
 
-const SettingsLayout = () => {
-  const [activeSection, setActiveSection] = useState("account");
-
-  const menuItems = [
+const Settings = () => {
+  const settingsItems = [
     {
-      id: "search",
-      title: "Search settings",
-      icon: <FiSearch size={18} />,
-      action: <FiPlay size={18} className="text-blue-500" />,
+      icon: Shield,
+      title: 'Account',
+      subtitle: 'Security notifications, account info',
+      color: 'text-blue-500'
     },
     {
-      id: "account",
-      title: "Account",
-      icon: <FiUser size={18} />,
-      subItems: [
-        { title: "Privacy", icon: <FiLock size={16} /> },
-        { title: "Chats", icon: <FiMessageSquare size={16} /> },
-        { title: "Notifications", icon: <FiBell size={16} /> },
-        // { title: "Keyboard shortcuts", icon: <FiKeyboard size={16} /> },
-        { title: "Help", icon: <FiHelpCircle size={16} /> },
-        {
-          title: "Log out",
-          icon: <FiLogOut size={16} className="text-red-500" />,
-        },
-      ],
+      icon: Lock,
+      title: 'Privacy',
+      subtitle: 'Blocked contacts, disappearing messages',
+      color: 'text-green-500'
     },
+    {
+      icon: MessageCircle,
+      title: 'Chats',
+      subtitle: 'Theme, wallpaper, chat settings',
+      color: 'text-green-500'
+    },
+    {
+      icon: Bell,
+      title: 'Notifications',
+      subtitle: 'Message notifications',
+      color: 'text-orange-500'
+    },
+    {
+      icon: Keyboard,
+      title: 'Keyboard shortcuts',
+      subtitle: 'Quick actions',
+      color: 'text-purple-500'
+    },
+    {
+      icon: HelpCircle,
+      title: 'Help',
+      subtitle: 'Help center, contact us, privacy policy',
+      color: 'text-blue-500'
+    }
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-gray-200 p-4">
-        <h1 className="text-xl font-bold mb-6">Settings</h1>
-        <nav>
-          <ul className="space-y-2">
-            {menuItems.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => setActiveSection(item.id)}
-                  className={`w-full flex items-center justify-between p-3 rounded-lg ${
-                    activeSection === item.id
-                      ? "bg-blue-50 text-blue-600"
-                      : "hover:bg-gray-100"
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="text-gray-500">{item.icon}</span>
-                    <span>{item.title}</span>
-                  </div>
-                  {item.action && item.action}
-                </button>
-
-                {item.subItems && activeSection === item.id && (
-                  <ul className="ml-10 mt-2 space-y-1">
-                    {item.subItems.map((subItem, index) => (
-                      <li key={index}>
-                        <button
-                          className={`w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 ${
-                            subItem.title === "Log out" ? "text-red-500" : ""
-                          }`}
-                        >
-                          <span className="text-gray-400">{subItem.icon}</span>
-                          <span>{subItem.title}</span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
+    <div className="h-full flex flex-col bg-gray-900 text-white">
+      {/* Header */}
+      <div className="px-4 py-4 sm:py-6 border-b border-gray-700">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-medium text-white">Settings</h1>
+          {/* Close button for mobile/tablet */}
+          <div className="sm:hidden">
+            <button className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm">×</span>
+            </button>
+          </div>
+        </div>
+        
+        {/* Search Bar */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search settings"
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          />
+        </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-8">
-        <div className="bg-white rounded-lg shadow-sm p-6 max-w-3xl">
-          <h2 className="text-xl font-semibold mb-6">
-            {menuItems.find((item) => item.id === activeSection)?.title}
-          </h2>
-          <div className="space-y-6">
-            {/* Content would go here based on selected section */}
-            <p className="text-gray-600">
-              {activeSection === "search"
-                ? "Search settings content would appear here"
-                : "Account settings content would appear here"}
-            </p>
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto pb-20 sm:pb-4">
+        {/* User Profile Section */}
+        <div className="px-4 py-6 border-b border-gray-800">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-700 rounded-full flex items-center justify-center">
+              <User className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-medium text-white">clay</h3>
+              <p className="text-sm text-gray-400">Hey there! I am using WhatsApp.</p>
+            </div>
           </div>
+        </div>
+
+        {/* Settings List */}
+        <div className="py-2">
+          {settingsItems.map((item, index) => {
+            const IconComponent = item.icon;
+            return (
+              <div 
+                key={index}
+                className="px-4 py-4 hover:bg-gray-800 active:bg-gray-700 cursor-pointer transition-colors duration-200"
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center">
+                    <IconComponent className={`w-5 h-5 ${item.color}`} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-base font-medium text-white">{item.title}</h4>
+                    <p className="text-sm text-gray-400 mt-0.5">{item.subtitle}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Log Out Section */}
+        <div className="px-4 py-4 border-t border-gray-800 mt-4">
+          <div className="flex items-center space-x-4 hover:bg-gray-800 active:bg-gray-700 cursor-pointer transition-colors duration-200 px-0 py-2 rounded-lg">
+            <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center">
+              <LogOut className="w-5 h-5 text-red-500" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-base font-medium text-red-500">Log out</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Navigation Bar for Mobile/Tablet */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 px-4 py-2">
+        <div className="flex items-center justify-around">
+          <button className="p-3 rounded-full hover:bg-gray-700 transition-colors">
+            <div className="w-6 h-6 bg-gray-600 rounded flex items-center justify-center">
+              <span className="text-white text-xs">✉</span>
+            </div>
+          </button>
+          <button className="p-3 rounded-full hover:bg-gray-700 transition-colors relative">
+            <Bell className="w-6 h-6 text-white" />
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs">1</span>
+            </div>
+          </button>
+          <button className="p-3 rounded-full hover:bg-gray-700 transition-colors relative">
+            <MessageCircle className="w-6 h-6 text-white" />
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs">●</span>
+            </div>
+          </button>
+          <button className="p-3 rounded-full hover:bg-gray-700 transition-colors">
+            <div className="w-6 h-6 bg-gray-600 rounded flex items-center justify-center">
+              <span className="text-white text-xs">👥</span>
+            </div>
+          </button>
+          <button className="p-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors">
+            <div className="w-6 h-6 flex items-center justify-center">
+              <span className="text-white text-xs">⚙</span>
+            </div>
+          </button>
+          <button className="p-3 rounded-full hover:bg-gray-700 transition-colors">
+            <User className="w-6 h-6 text-white" />
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default SettingsLayout;
+export default Settings;

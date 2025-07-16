@@ -25,7 +25,6 @@ export default function GPTSideBar() {
       {/* Upgrade Section */}
       <div className="p-4 border-t border-zinc-700 text-sm">
         <div className="text-blue-500 hover:underline cursor-pointer">Upgrade plan</div>
-        <div className="text-gray-400 text-xs mt-1">More access to the best models</div>
       </div>
     </aside>
   );
