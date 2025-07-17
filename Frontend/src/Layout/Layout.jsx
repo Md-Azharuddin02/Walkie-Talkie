@@ -25,7 +25,9 @@ const Layout = () => {
       <ResponsiveSidebar />
       
       {/* Tab Content Toggle */}
-      <TabContentToggle />
+
+      {activeTab === 'taskList' && <TabContentToggle />}
+
       
       {/* Tab Content Area */}
       <div
