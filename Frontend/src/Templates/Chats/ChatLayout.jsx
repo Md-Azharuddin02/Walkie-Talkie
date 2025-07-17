@@ -1,62 +1,60 @@
-import React, { useContext,useState } from "react";
+import React, { useContext, useState } from "react";
 import { Store } from "../../Store/Store";
-import { FaUser } from "react-icons/fa";
+import ChatHeader from "./ChatHeader";
+import Message from "./Message";
+import Footer from "./Footer";
+
 const ChatLayout = () => {
+  // Sample messages for demonstration
+    const sampleMessages = [
+  { userId: "user1", message: "Hey, how's it going?", time: "10:00 AM" },
+  { userId: "current_user_id", message: "Pretty good! Just working on a project.", time: "10:01 AM" },
+  { userId: "user1", message: "Nice! What kind of project?", time: "10:02 AM" },
+  { userId: "current_user_id", message: "A chat application using React.", time: "10:03 AM" },
+  { userId: "user1", message: "Sounds fun!", time: "10:04 AM" },
+  { userId: "current_user_id", message: "Yeah, learning a lot while doing it.", time: "10:05 AM" },
+  { userId: "user1", message: "Are you using any backend?", time: "10:06 AM" },
+  { userId: "current_user_id", message: "Yep! Express and MongoDB.", time: "10:07 AM" },
+  { userId: "user1", message: "Full stack, impressive!", time: "10:08 AM" },
+  { userId: "current_user_id", message: "Thanks! What's new with you?", time: "10:09 AM" },
+  { userId: "user1", message: "Not much, just started learning Node.js.", time: "10:10 AM" },
+  { userId: "current_user_id", message: "Awesome, it's really powerful.", time: "10:11 AM" },
+  { userId: "user1", message: "What do you like most about it?", time: "10:12 AM" },
+  { userId: "current_user_id", message: "The simplicity and async nature.", time: "10:13 AM" },
+  { userId: "user1", message: "Yeah, async can be tricky though.", time: "10:14 AM" },
+  { userId: "current_user_id", message: "True! Promises and async/await help a lot.", time: "10:15 AM" },
+  { userId: "user1", message: "Are you deploying your app?", time: "10:16 AM" },
+  { userId: "current_user_id", message: "Planning to use Vercel for frontend.", time: "10:17 AM" },
+  { userId: "user1", message: "What about backend?", time: "10:18 AM" },
+  { userId: "current_user_id", message: "Maybe Render or Railway.", time: "10:19 AM" },
+  { userId: "user1", message: "Cool, let me know how it goes.", time: "10:20 AM" },
+  { userId: "current_user_id", message: "Sure! Will keep you posted.", time: "10:21 AM" },
+  { userId: "user1", message: "Alright, time for lunch. Talk later!", time: "10:22 AM" },
+  { userId: "current_user_id", message: "Enjoy! Catch up soon.", time: "10:23 AM" },
+  { userId: "user1", message: "Back from lunch. Ready to code!", time: "11:00 AM" },
+  { userId: "current_user_id", message: "Let's gooo! 🚀", time: "11:01 AM" },
+  { userId: "user1", message: "Have you added authentication?", time: "11:02 AM" },
+  { userId: "current_user_id", message: "Yes, using JWT tokens.", time: "11:03 AM" },
+  { userId: "user1", message: "Nice, that's secure.", time: "11:04 AM" },
+  { userId: "current_user_id", message: "Trying to implement refresh tokens next.", time: "11:05 AM" }
+];
+
   return (
     <div className="w-full h-full flex flex-col bg-white">
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-white">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-            <FaUser className="text-gray-600" />
-          </div>
-          <div>
-            <h3 className="font-medium">John Doe</h3>
-            <p className="text-sm text-gray-500">Online</p>
-          </div>
-        </div>
+      {/* Header - Using responsive ChatHeader component */}
+      <ChatHeader />
+
+      {/* Messages - Using responsive Message component */}
+      <div className="flex-1 overflow-y-auto py-2 sm:py-4 space-y-1 sm:space-y-2 bg-gray-50">
+        {sampleMessages.map((message, index) => (
+          <Message key={index} message={message} />
+        ))}
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        <div className="flex justify-start">
-          <div className="bg-gray-100 p-3 rounded-lg max-w-xs lg:max-w-md">
-            <p className="text-sm">Hello! How are you doing?</p>
-            <span className="text-xs text-gray-500 mt-1 block">10:30 AM</span>
-          </div>
-        </div>
-        
-        <div className="flex justify-end">
-          <div className="bg-blue-600 text-white p-3 rounded-lg max-w-xs lg:max-w-md">
-            <p className="text-sm">I'm doing great, thanks for asking!</p>
-            <span className="text-xs text-blue-100 mt-1 block">10:32 AM</span>
-          </div>
-        </div>
-        
-        <div className="flex justify-start">
-          <div className="bg-gray-100 p-3 rounded-lg max-w-xs lg:max-w-md">
-            <p className="text-sm">That's wonderful to hear! What have you been up to lately?</p>
-            <span className="text-xs text-gray-500 mt-1 block">10:35 AM</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Input */}
-      <div className="p-4 border-t border-gray-200 bg-white">
-        <div className="flex items-center space-x-2">
-          <input 
-            type="text" 
-            placeholder="Type a message..." 
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500"
-          />
-          <button className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
-            </svg>
-          </button>
-        </div>
-      </div>
+      {/* Footer - Using responsive Footer component */}
+      <Footer />
     </div>
   );
 };
+
 export default ChatLayout;
