@@ -1,16 +1,15 @@
 import React, { useContext } from 'react';
 import { Store } from '../../Store/Store';
-import { FaEnvelope, FaBell, FaComment, FaUsers, FaCircle, FaCog, FaUser } from 'react-icons/fa';
+import { FaEnvelope, FaUsers, FaCog, FaUser } from 'react-icons/fa';
+import { VscRobot } from "react-icons/vsc";
 
 const ResponsiveSidebar = () => {
   const { user, setActiveTab, activeTab } = useContext(Store);
 
   const topIcons = [
     { icon: FaEnvelope, badge: { content: "1", color: "blue" }, onClick: () => setActiveTab("contacts"), id: "contacts" },
-    { icon: FaBell, badge: { color: "green" }, id: "notifications" },
-    { icon: FaComment, badge: { color: "green" }, id: "messages" },
     { icon: FaUsers, id: "users" },
-    { icon: FaCircle, color: "blue", onClick: () => setActiveTab("taskList"), id: "taskList" },
+    { icon: VscRobot, color: "blue", onClick: () => setActiveTab("taskList"), id: "taskList" },
   ];
 
   const bottomIcons = [
@@ -66,7 +65,7 @@ const ResponsiveSidebar = () => {
       {/* Mobile Bottom Navigation */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
         <div className="flex justify-around items-center py-2">
-          {[...topIcons.slice(0, 4), ...bottomIcons].map((props, i) => (
+          {[...topIcons, ...bottomIcons].map((props, i) => (
             <SidebarIcon key={i} {...props} isActive={activeTab === props.id} />
           ))}
         </div>
