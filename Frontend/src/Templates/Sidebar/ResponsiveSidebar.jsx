@@ -7,7 +7,7 @@ const ResponsiveSidebar = () => {
   const { user, setActiveTab, activeTab } = useContext(Store);
 
   const topIcons = [
-    { icon: FaEnvelope, badge: { content: "1", color: "blue" }, onClick: () => setActiveTab("contacts"), id: "contacts" },
+    { icon: FaEnvelope, badge: { content: "1", color: "blue" }, onClick: () => setActiveTab("userlist"), id: "userlist" },
     { icon: FaUsers, id: "users" },
     { icon: VscRobot, color: "blue", onClick: () => setActiveTab("taskList"), id: "taskList" },
   ];

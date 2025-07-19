@@ -3,9 +3,6 @@ import { Store } from "../../Store/Store";
 import {FiSearch} from 'react-icons/fi';
 import {FaPlus, FaEllipsisV, FaUser} from 'react-icons/fa';
 
-FaPlus
-
-
 
 const UsersList = () => {
   const { isCardOpen, setIsCardOpen } = useContext(Store);
@@ -50,7 +47,7 @@ const UsersList = () => {
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto px-4">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+        {[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13].map((i) => (
           <div key={i} className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
             <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
               <FaUser className="text-gray-600" />

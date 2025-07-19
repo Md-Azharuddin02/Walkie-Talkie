@@ -1,6 +1,5 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useState, useEffect } from 'react';
 import ResponsiveSidebar from '../Templates/Sidebar/ResponsiveSidebar/';
-import TabContentToggle from '../Components/TabContentToggle';
 import UsersList from '../Templates/Sidebar/UsersList';
 import UserProfile from '../Templates/Sidebar/UserProfile';
 import Settings from '../Templates/Sidebar/Setting';
@@ -10,48 +9,70 @@ import ChatLayout from '../Templates/Chats/ChatLayout';
 import { Store } from '../Store/Store';
 
 const Layout = () => {
-  const { activeTab, isTabContentOpen, setIsTabContentOpen } = useContext(Store);
+  const { activeTab } = useContext(Store);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Track screen size for responsive behavior
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // Memoize tab components to prevent unnecessary re-renders
   const tabComponents = useMemo(() => ({
-    contacts: <UsersList />,
+    userlist: <UsersList />,
     profile: <UserProfile />,
     settings: <Settings />,
     taskList: <TaskList />
   }), []);
+
+  // Memoize main content components
+  const mainContentComponents = useMemo(() => ({
+    userlist: <ChatLayout />,
+    profile: <ChatLayout />,
+    settings: <ChatLayout />,
+    taskList: <GPTLayout />
+  }), []);
+
+  // Get current main content component
+  const getCurrentMainContent = () => {
+    // On mobile, show tab components directly in main area when sidebar is hidden
+    if (isMobile) {
+      return tabComponents[activeTab] || <UsersList />;
+    }
+    
+    // On desktop, show main content components
+    return mainContentComponents[activeTab] || <ChatLayout />;
+  };
 
   return (
     <div className="w-full h-screen flex bg-gray-50 overflow-hidden">
       {/* Sidebar */}
       <ResponsiveSidebar />
       
-      {/* Tab Content Toggle */}
-      {activeTab === 'taskList' && <TabContentToggle />}
-
-      
-      {/* Tab Content Area */}
-      <div
-        className={`
-          lg:w-96 lg:ml-20 lg:block lg:static lg:h-full lg:border-r lg:border-gray-200 lg:bg-white
-          fixed top-0 right-0 w-80 h-full bg-white shadow-lg transform transition-transform duration-300 z-40
-          ${isTabContentOpen ? 'translate-x-0' : 'translate-x-full'}
-          lg:translate-x-0
-        `}
+      {/* Tab Content Area - Desktop Only */}
+      <aside
+        className="hidden lg:block lg:w-96 lg:ml-20 lg:h-full lg:border-r lg:border-gray-200 lg:bg-white"
+        role="complementary"
+        aria-label="Tab content"
       >
-        {tabComponents[activeTab] || <UsersList />}
-      </div>
-
-      {/* Overlay for mobile */}
-      {isTabContentOpen && (
-        <div 
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
-          onClick={() => setIsTabContentOpen(false)}
-        />
-      )}
+        {tabComponents[activeTab] || <TaskList />}
+      </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 h-full overflow-hidden bg-gray-100 lg:ml-0 pb-16 lg:pb-0">
-        {activeTab === 'taskList' ? <GPTLayout /> : <ChatLayout />}
-      </div>
+      <main 
+        className="flex-1 h-full overflow-hidden bg-gray-100 lg:ml-0 pb-16 lg:pb-0"
+        role="main"
+        aria-label="Main content"
+      >
+        {getCurrentMainContent()}
+      </main>
     </div>
   );
 };
