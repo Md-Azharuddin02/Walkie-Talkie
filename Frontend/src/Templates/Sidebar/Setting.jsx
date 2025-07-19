@@ -60,7 +60,7 @@ const Settings = () => {
     <div className="h-full bg-gray-900 text-white flex flex-col">
       {/* Header - Fixed */}
       <div className="flex-shrink-0 px-6 pt-12 pb-6 bg-gray-900">
-        <h1 className="text-2xl md:text-3xl font-semibold text-white mb-6">Settings</h1>
+        <h1 className="text-2xl md:text-3xl font-semibold text-white">Settings</h1>
       </div>
 
       {/* Scrollable Content */}
@@ -104,7 +104,7 @@ const Settings = () => {
         </div>
 
         {/* Log Out Section */}
-        <div className="px-6 pb-8 border-t border-gray-800 pt-4">
+        <div className=" border-t border-gray-800 pt-4">
           <div className="p-3 md:p-4 cursor-pointer rounded-lg hover:bg-gray-800 transition-colors">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 md:w-14 md:h-14 bg-red-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
