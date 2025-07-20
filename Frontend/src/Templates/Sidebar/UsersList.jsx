@@ -5,7 +5,7 @@ import {FaPlus, FaEllipsisV, FaUser} from 'react-icons/fa';
 
 
 const UsersList = () => {
-  const { isCardOpen, setIsCardOpen } = useContext(Store);
+  const { isCardOpen, setIsCardOpen, friendsList, setCurrentFriend } = useContext(Store);
   const filterOptions = ["ALL", "Unread", "Favourite", "Groups"];
 
   return (
@@ -47,20 +47,20 @@ const UsersList = () => {
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto px-4">
-        {[1, 2, 3, 4, 5, 6, 7, 8,9,10,11,12,13].map((i) => (
-          <div key={i} className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
-            <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
+        {friendsList.map((i) => (
+          <div  key={i} className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer" onClick={()=>setCurrentFriend(i)}>
+            <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center" >
               <FaUser className="text-gray-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">User {i}</p>
-              <p className="text-sm text-gray-500 truncate">Last message preview...</p>
+              <p className="text-sm font-medium text-gray-900 truncate">{i.name}</p>
+              <p className="text-sm text-gray-500 truncate">{i.message}</p>
             </div>
             <div className="flex flex-col items-end">
-              <span className="text-xs text-gray-500">12:30</span>
+              <span className="text-xs text-gray-500">{i.time}</span>
               {i <= 3 && (
                 <span className="bg-blue-500 text-white text-xs rounded-full px-2 py-1 mt-1">
-                  {i}
+                  {i.unreadCount}
                 </span>
               )}
             </div>

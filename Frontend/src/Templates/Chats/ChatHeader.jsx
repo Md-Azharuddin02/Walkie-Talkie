@@ -4,7 +4,7 @@ import { Store } from '../../Store/Store';
 import { FiVideo, FiSearch, FiMoreVertical } from 'react-icons/fi';
 
 const ChatHeader = () => {
-  const { user } = useContext(Store);
+  const { user, currentFriend } = useContext(Store);
 
   const profileUrl = user?.profileImage || img;
   const displayName = user?.name || 'Guest';
@@ -27,7 +27,7 @@ const ChatHeader = () => {
           className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
         />
         <h2 className="text-base sm:text-lg font-semibold text-gray-800 truncate">
-          {displayName}
+          {currentFriend.name}
         </h2>
       </div>
 

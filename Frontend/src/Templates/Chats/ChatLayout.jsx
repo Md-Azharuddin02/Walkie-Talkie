@@ -6,6 +6,7 @@ import Footer from "./Footer";
 
 const ChatLayout = () => {
   // Sample messages for demonstration
+  const { currentFriend } = useContext(Store);
     const sampleMessages = [
   { userId: "user1", message: "Hey, how's it going?", time: "10:00 AM" },
   { userId: "current_user_id", message: "Pretty good! Just working on a project.", time: "10:01 AM" },
@@ -42,7 +43,7 @@ const ChatLayout = () => {
   return (
     <div className="w-full h-full flex flex-col bg-white">
       {/* Header - Using responsive ChatHeader component */}
-      <ChatHeader />
+      <ChatHeader/>
 
       {/* Messages - Using responsive Message component */}
       <div className="flex-1 overflow-y-auto py-2 sm:py-4 space-y-1 sm:space-y-2 bg-gray-50">
