@@ -1,50 +1,64 @@
 import React, { useState } from "react";
 import { FaMicrophone } from "react-icons/fa";
 import { IoIosSend } from "react-icons/io";
-
 import getDeepSeekResponseStream from "../../../Custom/GPTAPI";
 
-export default function GetPrompt({ setBotMessage, setIsLoading }) {
+export default function GetPrompt({ setBotMessage }) {
   const [message, setMessage] = useState("");
-const handleSendMessage = async (e) => {
-  e.preventDefault();
-  if (!message.trim()) return;
 
-  setIsLoading(true);
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    
+    if (!message.trim()) return;
 
-  // Add a single combined object (prompt + empty response)
-  setBotMessage((prev) => [
-    ...prev,
-    { type: "pair", prompt: message, response: "" },
-  ]);
+    // Add a single combined object (prompt + empty response)
+    setBotMessage((prev) => [
+      ...prev,
+      { type: "pair", prompt: message, response: "" },
+    ]);
 
-  try {
-    await getDeepSeekResponseStream(message, (token) => {
+    try {
+      await getDeepSeekResponseStream(message, (token) => {
+        console.log("Received token:", message);
+        setBotMessage((prev) => {
+          const updated = [...prev];
+          const lastIndex = updated.length - 1;
+
+          if (lastIndex >= 0) {
+            updated[lastIndex] = {
+              ...updated[lastIndex],
+              response: updated[lastIndex].response + token,
+            };
+          }
+
+          return updated;
+        });
+      });
+    } catch (err) {
+      console.error("Streaming failed:", err);
+      
+      // Optional: Add error handling to show user-friendly error
       setBotMessage((prev) => {
         const updated = [...prev];
         const lastIndex = updated.length - 1;
-
+        
         if (lastIndex >= 0) {
           updated[lastIndex] = {
             ...updated[lastIndex],
-            response: updated[lastIndex].response + token,
+            response: "Sorry, there was an error processing your request.",
           };
         }
-
+        
         return updated;
       });
-    });
-  } catch (err) {
-    console.error("Streaming failed:", err);
-  }
-
-  setIsLoading(false);
-  setMessage("");
-};
-
+    }
+    
+    setMessage("");
+  };
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       handleSendMessage(event);
     }
   };
@@ -61,9 +75,9 @@ const handleSendMessage = async (e) => {
           onKeyDown={handleKeyPress}
         />
         <div className="flex items-center gap-3 text-gray-500 ml-2">
-          <button 
-            onClick={handleSendMessage} 
-            className="cursor-pointer hover:text-blue-500 transition-colors p-1"
+          <button
+            onClick={handleSendMessage}
+            className="cursor-pointer hover:text-blue-500 transition-colors p-1 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={!message.trim()}
           >
             <IoIosSend className="w-5 h-5" />

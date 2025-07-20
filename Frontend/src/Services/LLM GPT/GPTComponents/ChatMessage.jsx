@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { FaRegCopy, FaThumbsUp, FaThumbsDown, FaRedo } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
@@ -13,13 +13,11 @@ const ActionIcon = ({ Icon, hoverColor = "hover:text-gray-700", onClick }) => (
 export default function ChatMessage({ type, message }) {
   const isPrompt = type === "prompt";
 
-  // Memoized class strings
   const containerClasses = `w-full px-4 mb-4 flex ${isPrompt ? "justify-end" : "justify-start"}`;
   const messageClasses = `rounded-2xl px-4 py-3 text-sm break-words ${
     isPrompt ? "bg-slate-700 text-white" : "bg-gray-100 text-gray-900"
   }`;
 
-  // Icon configurations
   const promptIcons = [
     { Icon: FaRegCopy, hoverColor: "hover:text-red-700" },
     { Icon: MdDelete, hoverColor: "hover:text-gray-700" }
@@ -34,8 +32,15 @@ export default function ChatMessage({ type, message }) {
 
   const icons = isPrompt ? promptIcons : responseIcons;
 
+  // === Auto-scroll logic ===
+  const messageRef = useRef(null);
+
+  useEffect(() => {
+    messageRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   return (
-    <div className={containerClasses}>
+    <div className={containerClasses} ref={messageRef}>
       <div className="max-w-[80%] md:max-w-[80%]">
         <div
           className={messageClasses}

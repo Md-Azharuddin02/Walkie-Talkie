@@ -6,24 +6,7 @@ import { FiChevronRight } from "react-icons/fi";
 
 
 const TaskList = () => {
-  const chats = [
-    "React UI with Tailwind",
-    "MongoDB URI Fix", 
-    "Nodemon Permission Denied Fix",
-    "DNS Resolution Issue",
-    "OpenAI Free Integration Strategy",
-    "Code Optimization Guide",
-    "Integrating ChatGPT with React",
-    "Email Recovery via Backup",
-    "Missing Packages Installation",
-    "React Rendering & JSX Guide",
-    "Reconciliation in React",
-    "React Rendering Mastery Plan",
-    "Developer Roadmap 2025",
-    "Software Developer Roadmap 2...",
-    "React Todo App CRUD",
-    "Mongosh command not found",
-  ];
+  const chats = []
 
   return (
     <div className="w-full h-full bg-gray-900 text-white flex flex-col">

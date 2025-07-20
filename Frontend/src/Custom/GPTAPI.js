@@ -1,19 +1,19 @@
-const VITE_API_KEY = "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";
-const VITE_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const API_KEY = "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";
 
 async function getDeepSeekResponseStream(prompt, onData) {
-  const response = await fetch(VITE_API_URL, {
+  if (!API_KEY) throw new Error("API key is missing. Set VITE_API_KEY in your .env file.");
+
+  const response = await fetch(API_URL, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${VITE_API_KEY}`,
+      Authorization: `Bearer ${API_KEY}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": "http://localhost:5173",
-      "X-Title": "MyReactApp"
+      "HTTP-Referer": window.location.origin,
+      "X-Title": "MyReactApp"              
     },
     body: JSON.stringify({
-      model: "deepseek/deepseek-chat",
-      // This is for the another version, for the commented token in the
-      // model: "deepseek/deepseek-chat-v3-0324:free",
+      model: "deepseek/deepseek-chat-v3-0324:free",
       stream: true,
       messages: [
         {
@@ -24,8 +24,13 @@ async function getDeepSeekResponseStream(prompt, onData) {
     })
   });
 
+  if (!response.ok || !response.body) {
+    throw new Error(`OpenRouter error: ${response.status} ${response.statusText}`);
+  }
+
   const reader = response.body.getReader();
   const decoder = new TextDecoder("utf-8");
+
   let fullMessage = '';
   let buffer = '';
 
@@ -35,22 +40,23 @@ async function getDeepSeekResponseStream(prompt, onData) {
 
     buffer += decoder.decode(value, { stream: true });
     const lines = buffer.split('\n');
-    buffer = lines.pop() || ''; // Keep incomplete line in buffer
+    buffer = lines.pop() || ''; // keep incomplete line
 
     for (const line of lines) {
-      const trimmedLine = line.trim();
-      if (trimmedLine && trimmedLine.startsWith("data: ")) {
-        const json = trimmedLine.replace("data: ", "");
+      const trimmed = line.trim();
+      if (trimmed.startsWith("data: ")) {
+        const json = trimmed.slice(6);
         if (json === "[DONE]") break;
+
         try {
           const parsed = JSON.parse(json);
           const token = parsed.choices?.[0]?.delta?.content || "";
           if (token) {
             fullMessage += token;
-            onData(token); // update UI piece by piece
+            onData(token);
           }
         } catch (err) {
-          console.error("Error parsing stream chunk", err);
+          console.error("Failed to parse stream chunk:", err);
         }
       }
     }

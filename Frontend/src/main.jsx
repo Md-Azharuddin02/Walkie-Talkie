@@ -6,9 +6,7 @@ import App from './App.jsx';
 import { StoreProvider } from './Store/Store.jsx';
 // Create a root for rendering the React app
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <StoreProvider>
       <App />
     </StoreProvider>
-  </StrictMode>,
 );
