@@ -2,8 +2,10 @@ import React, { useContext } from 'react';
 import img from '../../assets/images/dummy.avif';
 import { Store } from '../../Store/Store';
 import { FiVideo, FiSearch, FiMoreVertical } from 'react-icons/fi';
+import { IoArrowBackSharp } from "react-icons/io5";
 
-const ChatHeader = () => {
+
+const ChatHeader = ({isMobile, setIsChatOpen}) => {
   const { user, currentFriend } = useContext(Store);
 
   const profileUrl = user?.profileImage || img;
@@ -20,6 +22,7 @@ const ChatHeader = () => {
   return (
     <div className="flex items-center justify-between p-3 sm:p-4 bg-gray-100 border-b border-gray-200 min-h-16">
       {/* Left Section */}
+      {isMobile && <IoArrowBackSharp className='mr-3 cursor-pointer' onClick={()=>setIsChatOpen(false)} />}
       <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer flex-1 min-w-0">
         <img
           src={profileUrl}

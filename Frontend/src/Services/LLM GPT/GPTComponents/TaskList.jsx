@@ -1,12 +1,35 @@
-import React from "react";
+import React, { useContext } from "react";
 import { TbWindowMinimize } from 'react-icons/tb';
 import { FiSearch } from "react-icons/fi";
 import { FiChevronRight } from "react-icons/fi";
+import { Store } from "../../../Store/Store";
 
 
 
 const TaskList = () => {
-  const chats = []
+  const {setCurrentTask}= useContext(Store)
+  const chats = [
+  "Fix mobile chat layout",
+  "Add loader for streaming response",
+  "Implement auto-scroll in chat",
+  "Store chat history in localStorage",
+  "Improve responsiveness of sidebar",
+  "Create login UI",
+  "Add JWT authentication",
+  "Fix duplicate key warning",
+  "Add timestamp to each chat message",
+  "Design chat UI for dark mode",
+  "Set up Express server",
+  "Connect MongoDB to backend",
+  "Send message to API",
+  "Implement refresh tokens",
+  "Show online/offline status",
+  "Add search to friend list",
+  "Create reusable button component",
+  "Fix scroll overflow bug",
+  "Deploy frontend to Vercel",
+  "Deploy backend to Railway"
+];
 
   return (
     <div className="w-full h-full bg-gray-900 text-white flex flex-col">
@@ -33,6 +56,7 @@ const TaskList = () => {
             <div
               key={index}
               className="px-3 py-2 rounded hover:bg-gray-700 cursor-pointer text-sm truncate"
+              onClick={() => setCurrentTask(index)}
             >
               {chat}
             </div>

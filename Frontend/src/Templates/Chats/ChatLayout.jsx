@@ -4,7 +4,7 @@ import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import Footer from "./Footer";
 
-const ChatLayout = () => {
+const ChatLayout = ({isMobile, setIsChatOpen}) => {
   // Sample messages for demonstration
   const { currentFriend } = useContext(Store);
     const sampleMessages = [
@@ -43,7 +43,7 @@ const ChatLayout = () => {
   return (
     <div className="w-full h-full flex flex-col bg-white">
       {/* Header - Using responsive ChatHeader component */}
-      <ChatHeader/>
+      <ChatHeader isMobile={isMobile} setIsChatOpen={setIsChatOpen}/>
 
       {/* Messages - Using responsive Message component */}
       <div className="flex-1 overflow-y-auto py-2 sm:py-4 space-y-1 sm:space-y-2 bg-gray-50">
