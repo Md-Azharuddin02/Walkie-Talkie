@@ -5,7 +5,7 @@ export const Store = createContext(null);
 
 export const StoreProvider = ({ children }) => {
   const [isCardOpen, setIsCardOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("taskList");
+  const [activeTab, setActiveTab] = useState("userlist");
   const [user, setUser] = useState(null);
   const [friendsList, setFriendsList] = useState([
     { id: 1, name: 'Emma Johnson', message: 'Are we still on for today?', time: '11:20 AM', unreadCount: 1 },
