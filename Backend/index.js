@@ -7,7 +7,6 @@ const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 const fs = require("fs");
-const connectDB = require("./DBConnection");
 const router = require("./Routes/Routes");
 const { init: initSocket } = require("./Service/socket");
 
@@ -54,6 +53,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // ─── Database & Routes ────────────────────────────────────────────────────────
+const connectDB = require("./DBConnection");
 connectDB(); // connect to MongoDB
 app.use("/api", router); // mount your API routes
 
