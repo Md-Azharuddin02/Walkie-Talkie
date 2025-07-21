@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5804");
+const socket = io("https://walkie-talkie-backend-25gu.onrender.com");
 
 const styles = {
   wrapper: {
@@ -187,7 +187,7 @@ function Register() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "api/auth/verify-otp",
+        "/api/auth/verify-otp",
         {
           phoneNumber: phone,
           otp: otpValue,

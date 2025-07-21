@@ -4,7 +4,9 @@ export default defineConfig({
   server: {
   proxy: {
     '/api': {
-      target: 'http://localhost:5804',
+      target: 'https://walkie-talkie-backend-25gu.onrender.com',
+      changeOrigin: true,
+        secure: false, // ❗ disables SSL verification
     },
   },
   port: 5173,
