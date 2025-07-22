@@ -12,7 +12,7 @@ export default function TokenAuthenticate({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch(`${VITE_API_BAS}api/user`, {
+        const response = await fetch(`${VITE_API_BAS}/api/user`, {
           credentials: "include",
         });
 
