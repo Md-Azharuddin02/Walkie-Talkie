@@ -6,13 +6,12 @@ export default function TokenAuthenticate({ children }) {
   const { setUser } = useContext(Store);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
-  const VITE_API_BAS =
-    import.meta.env.VITE_API_BAS ||
-    "https://walkie-talkie-backend-25gu.onrender.com";
+  const API_BASE =
+    import.meta.env.VITE_API_BAS || "https://walkie-talkie-backend-25gu.onrender.com";
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch(`${VITE_API_BAS}/api/user`, {
+        const response = await fetch(`${API_BASE}/api/user`, {
           credentials: "include",
         });
 
