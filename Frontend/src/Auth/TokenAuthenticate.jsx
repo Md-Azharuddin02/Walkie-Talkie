@@ -6,7 +6,7 @@ export default function TokenAuthenticate({ children }) {
   const { setUser } = useContext(Store);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
-  const API_BASE_URL =
+  const VITE_API_BAS =
     import.meta.env.VITE_API_BAS ||
     "https://walkie-talkie-backend-25gu.onrender.com";
   useEffect(() => {
