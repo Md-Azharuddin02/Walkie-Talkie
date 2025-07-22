@@ -61,7 +61,7 @@ app.use("/api", router); // mount your API routes
 const server = http.createServer(app);
 const io = initSocket(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "https://walkiee-talkiee.netlify.app",
     methods: ["GET", "POST", "PUT"],
   },
 });
