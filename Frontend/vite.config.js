@@ -6,7 +6,7 @@ export default defineConfig({
     '/api': {
       target: 'https://walkie-talkie-backend-25gu.onrender.com',
       changeOrigin: true,
-        secure: false, // ❗ disables SSL verification
+        secure: false,
     },
   },
   port: 5173,
