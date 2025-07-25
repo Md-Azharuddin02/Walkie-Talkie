@@ -77,8 +77,8 @@ async function handleVerifyOtp(req, res) {
       // Set cookie with appropriate options
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true, // required for HTTPS
-        sameSite: "Lax", // "None" if frontend & backend are on different domains
+       secure: process.env.NODE_ENV === "production",
+        sameSite: "None", // "None" if frontend & backend are on different domains
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       });
 
