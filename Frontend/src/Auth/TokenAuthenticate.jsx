@@ -14,17 +14,17 @@ const API_BASE_URL = isProduction
   ? "https://walkie-talkie-backend-25gu.onrender.com"
   : "http://localhost:5804";
 
-
-  useEffect(() => {
+useEffect(() => {
     const checkAuth = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/user`, {
           credentials: "include",
         });
-        console.log("Response status:", response);
+
         if (!response.ok) {
           throw new Error("Not authenticated");
         }
+
         const userData = await response.json();
         setUser(userData);
         setAuthenticated(true);
@@ -37,7 +37,7 @@ const API_BASE_URL = isProduction
     };
 
     checkAuth();
-  }, []);
+  }, [API_BASE_URL, setUser]);
 
   if (loading) {
     return <p>Loading...</p>;
