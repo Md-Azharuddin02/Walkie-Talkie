@@ -20,14 +20,14 @@ const API_BASE_URL = isProduction
 useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/user`, {
+        const response = await fetch(`https://walkie-talkie-backend-25gu.onrender.com/api/user`, {
           credentials: "include",
         })
+        const userData = await response.json();
         if (!response.ok) {
           throw new Error("Not authenticated");
         }
 
-        const userData = await response.json();
         console.log("User data:", userData);
         setUser(userData);
         setAuthenticated(true);
