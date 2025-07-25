@@ -11,7 +11,13 @@ import {
 import axios from "axios";
 import io from "socket.io-client";
 
-const API_BASE_URL = import.meta.env.VITE_API_BAS || "https://walkie-talkie-backend-25gu.onrender.com";
+const isProduction = import.meta.env.MODE === "production";
+
+const API_BASE_URL = isProduction
+  ? "https://walkie-talkie-backend-25gu.onrender.com"
+  : "http://localhost:5804";
+
+
 const socket = io(API_BASE_URL);
 
 const styles = {
@@ -154,11 +160,9 @@ function Register() {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/send-otp`,
-        {
-          phoneNumber: phone,
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/api/auth/send-otp`, {
+        phoneNumber: phone,
+      });
       console.log("OTP sent response:", response.data);
 
       if (response.data.success) {
@@ -186,7 +190,8 @@ function Register() {
 
     setIsLoading(true);
     try {
-      const response = await axios.post( `${API_BASE_URL}/api/auth/verify-otp`,
+      const response = await axios.post(
+        `${API_BASE_URL}/api/auth/verify-otp`,
         {
           phoneNumber: phone,
           otp: otpValue,
