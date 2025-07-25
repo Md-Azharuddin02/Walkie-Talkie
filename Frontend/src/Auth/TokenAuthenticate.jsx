@@ -10,7 +10,12 @@ export default function TokenAuthenticate({ children }) {
   
 // const isProduction = import.meta.env.MODE === "production";
 
-const API_BASE_URL = "https://walkie-talkie-backend-25gu.onrender.com"
+
+const isProduction = import.meta.env.MODE === "production";
+
+const API_BASE_URL = isProduction
+  ? "https://walkie-talkie-backend-25gu.onrender.com"
+  : "http://localhost:5804";
 
 useEffect(() => {
     const checkAuth = async () => {
@@ -35,7 +40,7 @@ useEffect(() => {
     };
 
     checkAuth();
-  }, [API_BASE_URL, setUser]);
+  }, []);
 
   if (loading) {
     return <p>Loading...</p>;
