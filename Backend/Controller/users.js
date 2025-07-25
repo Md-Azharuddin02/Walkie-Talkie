@@ -16,6 +16,7 @@ async function getUser(req, res) {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+    console.log("User data:", user);
     return res.status(200).json(user);
   } catch (err) {
     console.error('Error in getUser:', err);
