@@ -8,24 +8,22 @@ export default function TokenAuthenticate({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
 
   
-const isProduction = import.meta.env.MODE === "production";
+// const isProduction = import.meta.env.MODE === "production";
 
-const API_BASE_URL = isProduction
-  ? "https://walkie-talkie-backend-25gu.onrender.com"
-  : "http://localhost:5804";
+const API_BASE_URL = "https://walkie-talkie-backend-25gu.onrender.com"
 
 useEffect(() => {
     const checkAuth = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/user`, {
           credentials: "include",
-        });
-
+        })
         if (!response.ok) {
           throw new Error("Not authenticated");
         }
 
         const userData = await response.json();
+        console.log("User data:", userData);
         setUser(userData);
         setAuthenticated(true);
       } catch (error) {
