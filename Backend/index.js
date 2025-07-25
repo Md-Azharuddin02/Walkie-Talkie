@@ -19,9 +19,16 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
+const isProduction = process.env.NODE_ENV === "production";
+
+const API_BASE_URL = isProduction
+  ? "https://walkiee-talkiee.netlify.app"
+  : "http://localhost:5173";
+
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://walkiee-talkiee.netlify.app",
+    origin: API_BASE_URL,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
