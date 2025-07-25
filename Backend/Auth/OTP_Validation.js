@@ -2,14 +2,13 @@ const UserModel = require("../Model/Users");
 const { getSecret, generateOTP, verifyOTP } = require("./generateOtp");
 const { generateToken } = require("../Service/authentication");
 
-
 async function handleGetOtp(req, res) {
   const { phoneNumber } = req.body;
 
   if (!phoneNumber) {
     return res.status(400).json({
       success: false,
-      error: "Phone number is required"
+      error: "Phone number is required",
     });
   }
 
@@ -33,30 +32,30 @@ async function handleGetOtp(req, res) {
     res.status(200).json({
       success: true,
       message: "OTP sent successfully!",
-      otp: otp // Only for development
+      otp: otp, // Only for development
     });
   } catch (err) {
-    console.error('Error in handleGetOtp:', err);
+    console.error("Error in handleGetOtp:", err);
     res.status(500).json({
       success: false,
-      error: err.message || "Internal server error"
+      error: err.message || "Internal server error",
     });
   }
 }
 async function handleVerifyOtp(req, res) {
-  const { phoneNumber, otp, socketId} = req.body;
+  const { phoneNumber, otp, socketId } = req.body;
   if (!phoneNumber || !otp) {
     return res.status(400).json({
       success: false,
-      error: "Phone number and OTP are required"
+      error: "Phone number and OTP are required",
     });
   }
   try {
-    const user = await UserModel.findOne({ phoneNumber })
+    const user = await UserModel.findOne({ phoneNumber });
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: "User not found"
+        error: "User not found",
       });
     }
 
@@ -67,33 +66,37 @@ async function handleVerifyOtp(req, res) {
         { phoneNumber },
         {
           $push: {
-            connections: { socketId, connectedAt: new Date() }
+            connections: { socketId, connectedAt: new Date() },
           },
-          $set: { status: 'online' }
-        },
+          $set: { status: "online" },
+        }
       );
       await user.save();
       const token = generateToken(user);
-      
+
       // Set cookie with appropriate options
-      res.cookie('token', token);
-      
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true, // required for HTTPS
+        sameSite: "Lax", // "None" if frontend & backend are on different domains
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      });
 
       res.status(200).json({
         success: true,
-        message: "OTP verified successfully"
+        message: "OTP verified successfully",
       });
     } else {
       res.status(400).json({
         success: false,
-        error: "Invalid OTP"
+        error: "Invalid OTP",
       });
     }
   } catch (err) {
-    console.error('Error in handleVerifyOtp:', err);
+    console.error("Error in handleVerifyOtp:", err);
     res.status(500).json({
       success: false,
-      error: err.message || "Internal server error"
+      error: err.message || "Internal server error",
     });
   }
 }
