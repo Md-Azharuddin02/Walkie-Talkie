@@ -6,12 +6,8 @@ export default function TokenAuthenticate({ children }) {
   const { setUser } = useContext(Store);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
-
-  
-// const isProduction = import.meta.env.MODE === "production";
-
-
-const isProduction = import.meta.env.MODE === "production";
+ 
+  const isProduction = import.meta.env.MODE === "production";
 
 const API_BASE_URL = isProduction
   ? "https://walkie-talkie-backend-25gu.onrender.com"
@@ -20,7 +16,7 @@ const API_BASE_URL = isProduction
 useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch(`https://walkie-talkie-backend-25gu.onrender.com/api/user`, {
+        const response = await fetch(`${API_BASE_URL}/api/user`, {
           credentials: "include",
         })
         const userData = await response.json();
