@@ -5,6 +5,7 @@ const UserModel = require("../Model/Users");
 // GET /api/user
 async function getUser(req, res) {
   const { _id: userId } = req.user;
+  console.log(userId)
 
   try {
     const user = await UserModel

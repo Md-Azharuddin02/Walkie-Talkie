@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-// 🔌 Sub-schema for tracking socket connections
 const ConnectionSchema = new Schema(
   {
     socketId: {

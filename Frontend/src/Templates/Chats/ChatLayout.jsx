@@ -1,8 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Store } from "../../Store/Store";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import Footer from "./Footer";
+import { io } from "socket.io-client";
+const socket = io('http://localhost:5804');
 
 const ChatLayout = ({isMobile, setIsChatOpen}) => {
   // Sample messages for demonstration
@@ -39,6 +41,29 @@ const ChatLayout = ({isMobile, setIsChatOpen}) => {
   { userId: "user1", message: "Nice, that's secure.", time: "11:04 AM" },
   { userId: "current_user_id", message: "Trying to implement refresh tokens next.", time: "11:05 AM" }
 ];
+  const [allMessages, setAllMessages] = useState([])
+  console.log(allMessages)
+
+  useEffect(() => {
+    socket.on('message', (message) => {
+      
+      setAllMessages((prev) => [...prev, message])
+    })
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from the server!');
+    })
+
+    return () => {
+      socket.off('connect');
+      socket.off('message');
+      socket.off('disconnect');
+    }
+  }, [socket])
+
+  const SendMessage=(message)=>{
+    socket.emit('message',message)
+  }
 
   return (
     <div className="w-full h-full flex flex-col bg-white">
@@ -47,13 +72,13 @@ const ChatLayout = ({isMobile, setIsChatOpen}) => {
 
       {/* Messages - Using responsive Message component */}
       <div className="flex-1 overflow-y-auto py-2 sm:py-4 space-y-1 sm:space-y-2 bg-gray-50">
-        {sampleMessages.map((message, index) => (
+        {allMessages.map((message, index) => (
           <Message key={index} message={message} />
         ))}
       </div>
 
       {/* Footer - Using responsive Footer component */}
-      <Footer />
+      <Footer SendMessage={SendMessage}/>
     </div>
   );
 };

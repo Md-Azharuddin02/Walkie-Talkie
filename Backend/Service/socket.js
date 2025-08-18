@@ -1,50 +1,45 @@
 const { Server } = require('socket.io');
-let ioInstance = null;
 
-const userSocketMap = new Map(); // userId → socket.id
+const socketServer = (server) => {
+  const io = new Server(server, {
+    cors: {
+      origin: 'http://localhost:5173',
+      methods: ['GET', 'POST'],
+    },
+  });
 
-function init(server, corsOptions) {
-  if (ioInstance) return ioInstance;
+  io.on('connection', (socket) => {
+    console.log(`User connected: ${socket.id}`);
 
-  ioInstance = new Server(server, { cors: corsOptions });
-
-  ioInstance.on('connection', (socket) => {
-    console.log(`🔌 Connected: ${socket.id}`);
-
-    // Register the user with a userId
-    socket.on('registerUser', (userId) => {
-      userSocketMap.set(userId, socket.id);
-      console.log(`📌 Registered user ${userId} → ${socket.id}`);
+    socket.on('joinRoom', (room) => {
+      socket.join(room);
+      console.log(`User ${socket.id} joined room: ${room}`);
     });
 
-    // Client wants to send a message to another user
-    socket.on('sendMessage', (message) => {
-      // const targetSocketId = userSocketMap.get(toUserId);
-      // if (targetSocketId) {
-      //   ioInstance.to(targetSocketId).emit('receiveMessage', {
-      //     fromUserId,
-      //     message,
-      //   });
-      // } else {
-      //   console.log(`❌ User ${toUserId} not found`);
-      // }
-      ioInstance.emit('receiveMessage', {
-        message,
+    socket.on('message', (msg) => {
+      const isoDate = '2025-08-17T08:12:58.888Z';
+      const date = new Date(isoDate);
+
+      const formattedTime = date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true, // 12-hour format (AM/PM)
       });
+
+      const message = { msg, timestamp: formattedTime}
+      io.emit('message', message); // Broadcast to room
+    });
+
+    socket.on('error', (error) => {
+      console.error(`Socket error for ${socket.id}:`, error);
     });
 
     socket.on('disconnect', () => {
-      console.log(`🔌 Disconnected: ${socket.id}`);
-      for (const [userId, sId] of userSocketMap.entries()) {
-        if (sId === socket.id) {
-          userSocketMap.delete(userId);
-          break;
-        }
-      }
+      console.log(`User disconnected: ${socket.id}`);
     });
   });
 
-  return ioInstance;
-}
+  return io;
+};
 
-module.exports = { init, getIO: () => ioInstance };
+module.exports = { socketServer };

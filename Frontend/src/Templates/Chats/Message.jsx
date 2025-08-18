@@ -41,7 +41,7 @@ const Message = ({ message }) => {
           <span className={`text-sm sm:text-base leading-relaxed ${
             isSender ? "text-white" : "text-black"
           }`}>
-            {message.message}
+            {message.msg}
           </span>
         </div>
 
@@ -49,7 +49,7 @@ const Message = ({ message }) => {
         <div className={`text-xs text-right mt-1 sm:mt-2 ${
           isSender ? "text-blue-100" : "text-gray-500"
         }`}>
-          {message.time}
+          {message.timestamp}
         </div>
       </div>
     </div>

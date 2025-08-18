@@ -1,24 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import Message from "./Message";
-import io from "socket.io-client";
 
-const socket = io("http://localhost:5804");
 
 const ChatContent = () => {
   const [messages, setMessages] = useState([]);
   const bottomRef = useRef(null);
 
-  useEffect(() => {
-    const handleReceiveMessage = ({ message }) => {
-      setMessages((prev) => [...prev, message]);
-    };
-
-    socket.on("receiveMessage", handleReceiveMessage);
-
-    return () => {
-      socket.off("receiveMessage", handleReceiveMessage);
-    };
-  }, []);
 
   useEffect(() => {
     if (bottomRef.current) {

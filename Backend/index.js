@@ -1,5 +1,5 @@
 // server/index.js
-require("dotenv").config();
+const config = require("./config");
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
@@ -8,9 +8,9 @@ const rateLimit = require("express-rate-limit");
 const path = require("path");
 const fs = require("fs");
 const router = require("./Routes/Routes");
-const { init: initSocket } = require("./Service/socket");
 
 const app = express();
+const server= http.createServer(app)
 
 // ─── Ensure uploads folder exists ─────────────────────────────────────────────
 const uploadsDir = path.join(__dirname, "uploads");
@@ -64,20 +64,12 @@ const connectDB = require("./DBConnection");
 connectDB(); // connect to MongoDB
 app.use("/api", router); // mount your API routes
 
-// ─── Create Server & Socket.IO ───────────────────────────────────────────────
-const server = http.createServer(app);
-const io = initSocket(server, {
-  cors: {
-    origin: process.env.FRONTEND_URL || "https://walkiee-talkiee.netlify.app",
-    methods: ["GET", "POST", "PUT"],
-  },
-});
 
-// (Optional) export io if you need to emit from other modules
-module.exports = { io };
+const {socketServer}= require('./Service/socket')
+socketServer(server)
 
 // ─── Start Listening ─────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 5804;
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+// const PORT = process.env.PORT || 5804;
+server.listen(config.port, () => {
+  console.log(`🚀 Server running on port ${config.port}`);
 });

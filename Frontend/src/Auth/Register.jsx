@@ -9,7 +9,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 import axios from "axios";
-import io from "socket.io-client";
 
 const isProduction = import.meta.env.MODE === "production";
 
@@ -18,7 +17,6 @@ const API_BASE_URL = isProduction
   : "http://localhost:5804";
 
 
-const socket = io(API_BASE_URL);
 
 const styles = {
   wrapper: {
@@ -112,19 +110,8 @@ function Register() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [remainingTime, setRemainingTime] = useState(0);
-  const [socketId, setSocketId] = useState("");
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected, my socket ID =", socket.id);
-      setSocketId(socket.id);
-    });
 
-    // clean up if component unmounts
-    return () => {
-      socket.off("connect");
-    };
-  }, []);
 
   const validatePhone = () => {
     const phoneRegex = /^[6-9]\d{9}$/; // Indian mobile number validation
@@ -195,7 +182,6 @@ function Register() {
         {
           phoneNumber: phone,
           otp: otpValue,
-          socketId: socketId,
         },
         {
           withCredentials: true,

@@ -1,14 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { FiPlus, FiSmile, FiMic } from 'react-icons/fi';
 import { IoMdSend } from "react-icons/io";
-import io from 'socket.io-client';
-import { Store } from '../../Store/Store';
 
-const socket = io('http://localhost:5804');
-
-const Footer = () => {
-  const [message, setMessage] = useState([]);
-  const { user } = useContext(Store);
+const Footer = ({SendMessage}) => {
+  const [message, setMessage]= useState('')
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -20,12 +15,7 @@ const Footer = () => {
     e.preventDefault();
     if (message.trim()) {
       try {
-        socket.emit('sendMessage',  {
-          userId: user._id,
-          toUserId: 'ICs3wiC70dw6BwRvAAIV',
-          fromUserId: socket.id,
-          message,
-        });
+       SendMessage(message)
         setMessage('');
       }
       catch (error) {
@@ -33,7 +23,8 @@ const Footer = () => {
       }
     }
   };
-  
+
+
   return (
     <div className="flex items-center p-2 sm:p-3 md:p-4 bg-gray-100 border-t border-gray-200 position-fixed bottom-0 w-full min-h-16">
       {/* Plus Icon (Attachments) */}

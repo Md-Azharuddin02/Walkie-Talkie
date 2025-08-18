@@ -1,6 +1,8 @@
 const UserModel = require("../Model/Users");
 const { getSecret, generateOTP, verifyOTP } = require("./generateOtp");
 const { generateToken } = require("../Service/authentication");
+const {sendOTP}= require('./sendOTP')
+const config = require("../config");
 
 async function handleGetOtp(req, res) {
   const { phoneNumber } = req.body;
@@ -29,6 +31,10 @@ async function handleGetOtp(req, res) {
 
     const otp = generateOTP(user.otpSecret);
 
+
+    // Twilio integration---------------
+    // sendOTP(phoneNumber, otp)
+
     res.status(200).json({
       success: true,
       message: "OTP sent successfully!",
@@ -43,7 +49,7 @@ async function handleGetOtp(req, res) {
   }
 }
 async function handleVerifyOtp(req, res) {
-  const { phoneNumber, otp, socketId } = req.body;
+  const { phoneNumber, otp } = req.body;
   if (!phoneNumber || !otp) {
     return res.status(400).json({
       success: false,
@@ -66,7 +72,7 @@ async function handleVerifyOtp(req, res) {
         { phoneNumber },
         {
           $push: {
-            connections: { socketId, connectedAt: new Date() },
+            connections: {connectedAt: new Date() },
           },
           $set: { status: "online" },
         }
@@ -77,7 +83,7 @@ async function handleVerifyOtp(req, res) {
       // Set cookie with appropriate options
       res.cookie("token", token, {
         httpOnly: true,
-       secure: process.env.NODE_ENV === "production",
+        secure: config.JWT_SECRET,
         sameSite: "None", // "None" if frontend & backend are on different domains
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       });
