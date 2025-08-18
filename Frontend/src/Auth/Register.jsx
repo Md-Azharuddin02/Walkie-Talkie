@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { config } from "../../config";
 import {
   TextField,
   Box,
@@ -9,13 +10,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 import axios from "axios";
-
-const isProduction = import.meta.env.MODE === "production";
-
-const API_BASE_URL = isProduction
-  ? "https://walkie-talkie-backend-25gu.onrender.com"
-  : "http://localhost:5804";
-
 
 
 const styles = {
@@ -144,10 +138,9 @@ function Register() {
 
   const handleSendOTP = async () => {
     if (!validatePhone() || isLoading || remainingTime > 0) return;
-
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/send-otp`, {
+      const response = await axios.post(`${config.apiBase}/api/auth/send-otp`, {
         phoneNumber: phone,
       });
       console.log("OTP sent response:", response.data);
@@ -178,7 +171,7 @@ function Register() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/api/auth/verify-otp`,
+        `${config.apiBase}/api/auth/verify-otp`,
         {
           phoneNumber: phone,
           otp: otpValue,
