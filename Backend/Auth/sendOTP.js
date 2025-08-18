@@ -14,16 +14,16 @@ if (!config.twilioSid || !config.twilioToken || !config.twilioPhone) {
 const client = twilio(config.twilioSid, config.twilioToken);
 /**
  * Send OTP to a phone number
- * @param {string} phoneNumber - e.g., '9876543210'
- * @param {string} otp - 6-digit OTP
+ * @param {string} phoneNumber 
+ * @param {string} otp 
  */
 async function sendOTP(phoneNumber, otp) {
 
   try {
     const message = await client.messages.create({
       body: `Your OTP code is: ${otp}`,
-      from: config.twilioPhone, // Use env-configured Twilio number
-      to: `+91${phoneNumber}`, // Add country code dynamically
+      from: config.twilioPhone, 
+      to: `+91${phoneNumber}`,
     });
     return message;
   } catch (error) {

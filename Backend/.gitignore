@@ -21,10 +21,7 @@ database.db
 uploads/
 
 # .env file
-.env
-.env.development
-.env.production
-.env.production
+
 
 # IDE and editor files
 .vscode/
