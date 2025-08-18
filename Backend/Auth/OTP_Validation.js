@@ -33,7 +33,7 @@ async function handleGetOtp(req, res) {
 
 
     // Twilio integration---------------
-    // sendOTP(phoneNumber, otp)
+    sendOTP(phoneNumber, otp)
 
     res.status(200).json({
       success: true,
@@ -83,7 +83,7 @@ async function handleVerifyOtp(req, res) {
       // Set cookie with appropriate options
       res.cookie("token", token, {
         httpOnly: true,
-        secure: config.JWT_SECRET,
+        secure: config.jwtSecret,
         sameSite: "None", // "None" if frontend & backend are on different domains
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       });

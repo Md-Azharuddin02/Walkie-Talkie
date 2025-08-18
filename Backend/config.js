@@ -12,10 +12,11 @@ dotenv.config({ path: envPath });
 // Export config values
 module.exports = {
   port: process.env.PORT || 5804,
-  mongoUri: process.env.MONGO_URI,
+  mongouri: process.env.MONGODB_URL,
   twilioSid: process.env.TWILIO_ACCOUNT_SID,
   twilioToken: process.env.TWILIO_AUTH_TOKEN,
   twilioPhone: process.env.TWILIO_PHONE,
-  JWT_SECRET: process.env.JWT_SECRET,
+  jwtSecret: process.env.JWT_SECRET,
+  api_base_url: process.env.API_BASE_URL || 'http://localhost:5173',
   nodeEnv: env,
 };
