@@ -33,7 +33,7 @@ async function handleGetOtp(req, res) {
 
 
     // Twilio integration---------------
-    sendOTP(phoneNumber, otp)
+    //sendOTP(phoneNumber, otp)
 
     res.status(200).json({
       success: true,
