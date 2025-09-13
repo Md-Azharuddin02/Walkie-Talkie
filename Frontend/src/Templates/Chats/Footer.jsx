@@ -1,7 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FiPlus, FiSmile, FiMic } from 'react-icons/fi';
 import { IoMdSend } from "react-icons/io";
+import {io}  from "socket.io-client";
 
+const socket= io('localhost:5804'); 
 const Footer = ({SendMessage}) => {
   const [message, setMessage]= useState('')
 
@@ -23,6 +25,7 @@ const Footer = ({SendMessage}) => {
       }
     }
   };
+
 
 
   return (
