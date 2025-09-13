@@ -29,7 +29,7 @@ async function handleGetOtp(req, res) {
       await user.save();
     }
 
-    const otp = generateOTP(user.otpSecret);
+    const otp =  generateOTP(user.otpSecret);
 
 
     // Twilio integration---------------

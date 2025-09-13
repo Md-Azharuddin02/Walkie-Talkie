@@ -11,7 +11,6 @@ logs/
 
 # Config files
 config.json
-config.js
 
 # Database files
 database.db
@@ -21,7 +20,8 @@ database.db
 uploads/
 
 # .env file
-
+*.env.development
+*.env.production
 
 # IDE and editor files
 .vscode/
