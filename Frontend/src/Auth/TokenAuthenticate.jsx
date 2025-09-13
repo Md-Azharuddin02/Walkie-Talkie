@@ -6,17 +6,27 @@ export default function TokenAuthenticate({ children }) {
   const { setUser } = useContext(Store);
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
+<<<<<<< HEAD
  
   const isProduction = import.meta.env.MODE === "production";
 
 const API_BASE_URL = isProduction
   ? "https://walkie-talkie-backend-25gu.onrender.com"
   : "http://localhost:5804";
+=======
+
+  
+// const isProduction = import.meta.env.MODE === "production";
+>>>>>>> df4800f (add opt authentication use twilio)
 
 useEffect(() => {
     const checkAuth = async () => {
       try {
+<<<<<<< HEAD
         const response = await fetch(`${API_BASE_URL}/api/user`, {
+=======
+        const response = await fetch(`http://localhost:5804/api/user`, {
+>>>>>>> df4800f (add opt authentication use twilio)
           credentials: "include",
            mode: 'cors',
         })
