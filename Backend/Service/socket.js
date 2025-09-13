@@ -1,41 +1,30 @@
-const { Server } = require('socket.io');
+const { Server } = require("socket.io");
 
 const socketServer = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: 'http://localhost:5173',
-      methods: ['GET', 'POST'],
+      origin: "http://localhost:5173",
+      methods: ["GET", "POST"],
     },
   });
 
-  io.on('connection', (socket) => {
-    console.log(`User connected: ${socket.id}`);
+  const userTosocket = new Map();
+  const socketTouser = new Map();
 
-    socket.on('joinRoom', (room) => {
-      socket.join(room);
-      console.log(`User ${socket.id} joined room: ${room}`);
-    });
+  io.on("connection", (socket) => {
+    socket.on("message", (data) => {
+      console.log("Message received on server:", data);
+      if (!data.socket) return;
+      userTosocket.set(data.userId, data.socket);
+      socketTouser.set(data.socket, data.userId);
 
-    socket.on('message', (msg) => {
-      const isoDate = '2025-08-17T08:12:58.888Z';
-      const date = new Date(isoDate);
+      console.log("userTosocket", userTosocket.get(data.userId));
+      console.log("socketTouser", socketTouser.get(data.socket));
 
-      const formattedTime = date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true, // 12-hour format (AM/PM)
-      });
-
-      const message = { msg, timestamp: formattedTime}
-      io.emit('message', message); // Broadcast to room
-    });
-
-    socket.on('error', (error) => {
-      console.error(`Socket error for ${socket.id}:`, error);
-    });
-
-    socket.on('disconnect', () => {
-      console.log(`User disconnected: ${socket.id}`);
+      // Private message
+      socket.join(data.userId);
+      console.log(`👤 User is now online as socket ${data.userId}`);
+      io.emit("presence:update", { online: true });
     });
   });
 
