@@ -5,7 +5,7 @@ import {FaPlus, FaEllipsisV, FaUser} from 'react-icons/fa';
 
 
 const UsersList = () => {
-  const { isCardOpen, setIsCardOpen, friendsList, setCurrentFriend,setIsChatOpen } = useContext(Store);
+  const { isCardOpen, setIsCardOpen, user, setCurrentFriend,setIsChatOpen } = useContext(Store);
   const filterOptions = ["ALL", "Unread", "Favourite", "Groups"];
 
   return (
@@ -47,7 +47,7 @@ const UsersList = () => {
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto px-4">
-        {friendsList.map((i) => (
+        {user.friendList.map((i) => (
           <div  key={i.id} className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer" onClick={()=>{setCurrentFriend(i), setIsChatOpen(true)}}>
             <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center" >
               <FaUser className="text-gray-600" />

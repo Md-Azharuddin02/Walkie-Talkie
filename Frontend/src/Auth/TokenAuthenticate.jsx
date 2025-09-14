@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { Store } from "../Store/Store";
+import { io } from "socket.io-client";
+const socket = io("http://localhost:5804");
 
 export default function TokenAuthenticate({ children }) {
   const { setUser } = useContext(Store);
@@ -17,10 +19,15 @@ useEffect(() => {
           credentials: "include",
            mode: 'cors',
         })
-        const userData = await response.json();
         if (!response.ok) {
           throw new Error("Not authenticated");
         }
+        const userData = await response.json();
+
+        socket.off("connect");
+        socket.on("connect", () => {
+          socket.emit("new-connection", { userId: userData._id});
+        });
 
         setUser(userData);
         setAuthenticated(true);

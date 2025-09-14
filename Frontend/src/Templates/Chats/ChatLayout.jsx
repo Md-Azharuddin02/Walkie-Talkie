@@ -4,16 +4,13 @@ import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import Footer from "./Footer";
 import { io } from "socket.io-client";
-import { use } from "react";
 const socket = io("http://localhost:5804");
 
 const ChatLayout = ({ isMobile, setIsChatOpen }) => {
-  // Sample messages for demonstration
-  const {user } = useContext(Store);
-    console.log('current user id:', user.id);
+  const {user, currentFriend } = useContext(Store);
 
   const sampleMessages = [
-    { userId: "user1", message: "Hey, how's it going?", time: "10:00 AM" },
+    { userId: "user1", message: "Hey, how's it going?", time: "10:00 AM", phoneNumber: "1234567890" },
     {
       userId: "current_user_id",
       message: "Pretty good! Just working on a project.",
@@ -144,6 +141,7 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
 
   useEffect(() => {
     socket.on("Message received", (data) => {
+      
       setAllMessages((prev) => [...prev, data]);
     });
 
@@ -156,12 +154,13 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
       socket.off("message");
       socket.off("disconnect");
     };
-  }, [socket]);
+  }, []);
 
   const SendMessage = (message) => {
     socket.emit("message", {
-      userId: user.phone,
-      socket: socket.id,
+      senderId: user._id,
+      senderSocketId: socket.id,
+      receiverPhoneNumber: currentFriend.phoneNumber,
       msg: message,
       timestamp: new Date().toLocaleTimeString(),
     });
@@ -169,10 +168,8 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
 
   return (
     <div className="w-full h-full flex flex-col bg-white">
-      {/* Header - Using responsive ChatHeader component */}
       <ChatHeader isMobile={isMobile} setIsChatOpen={setIsChatOpen} />
 
-      {/* Messages - Using responsive Message component */}
       <div className="flex-1 overflow-y-auto py-2 sm:py-4 space-y-1 sm:space-y-2 bg-gray-50">
         {allMessages.map((message, index) => (
           <Message key={index} message={message} />

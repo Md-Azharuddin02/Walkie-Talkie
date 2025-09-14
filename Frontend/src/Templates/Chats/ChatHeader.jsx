@@ -9,7 +9,9 @@ const ChatHeader = ({isMobile, setIsChatOpen}) => {
   const { user, currentFriend } = useContext(Store);
 
   const profileUrl = user?.profileImage || img;
-  const displayName = user?.name || 'Guest';
+  const displayName = currentFriend?.name || 'Guest';
+  console.log("displayName", displayName)
+
 
   const iconButtonClass = "text-gray-600 hover:text-gray-800 cursor-pointer p-2 rounded-full hover:bg-gray-200 transition-colors duration-200";
 
@@ -30,7 +32,7 @@ const ChatHeader = ({isMobile, setIsChatOpen}) => {
           className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
         />
         <h2 className="text-base sm:text-lg font-semibold text-gray-800 truncate">
-          {currentFriend.name}
+          {displayName}
         </h2>
       </div>
 

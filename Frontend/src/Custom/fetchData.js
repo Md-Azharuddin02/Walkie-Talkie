@@ -4,24 +4,27 @@ import axios from "axios";
 const useFetchData = (base_URL) => {
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState(null);
-  const [data, setData] = useState(null); // Start as null for clarity
+  const [data, setData] = useState(null); 
 
   useEffect(() => {
     const fetchData = async (url) => {
       setLoader(true);
       try {
-        const response = await axios.get(url);
+        const response = await fetch(url, {
+          credentials: "include",
+           mode: 'cors',
+        });
 
+        // console.log("Fetch response:", response);
         if (response.status !== 200) {
           throw new Error(`Unexpected status code: ${response.status}`);
         }
-
-        // Handle null or empty response
-        if (!response.data) {
+        const responseData = await response.json();
+        if (!responseData) {
           throw new Error("No data found (possibly user not in DB)");
         }
 
-        setData(response.data);
+        setData(responseData);
       } catch (err) {
         setError(
           err.response?.status === 404

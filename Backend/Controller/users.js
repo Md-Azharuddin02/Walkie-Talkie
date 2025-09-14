@@ -5,19 +5,17 @@ const UserModel = require("../Model/Users");
 // GET /api/user
 async function getUser(req, res) {
   const { _id: userId } = req.user;
-  console.log(userId)
 
   try {
     const user = await UserModel
       .findById(userId)
-      .select('name email phoneNumber profileImage status, aboutStatus') // only what you need
-      .lean()       // returns a plain JS object, faster than a Mongoose doc
+      .select('name, phoneNumber profileImage, aboutStatus, socketId, friendList ') // only what you need
+      .lean()    
       .exec();
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    console.log("User data:", user);
     return res.status(200).json(user);
   } catch (err) {
     console.error('Error in getUser:', err);

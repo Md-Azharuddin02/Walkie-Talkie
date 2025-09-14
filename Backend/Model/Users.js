@@ -1,28 +1,33 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-const ConnectionSchema = new Schema(
+const friendListSchema = [
   {
-    socketId: {
-      type: String,
-      index: true
-    },
-    connectedAt: {
-      type: Date,
-      default: Date.now
-    },
-    disconnectedAt: {
-      type: Date
-    },
-    lastActiveAt: {
-      type: Date,
-      default: Date.now
-    }
+    id: 1,
+    name: "Emma Johnson",
+    message: "Are we still on for today?",
+    time: "11:20 AM",
+    unreadCount: 1,
+    phoneNumber: "1111111111",
   },
-  { _id: false }
-);
+  {
+    id: 2,
+    name: "Liam Smith",
+    message: "Got it, thanks!",
+    time: "9:45 AM",
+    unreadCount: 2,
+    phoneNumber: "2222222222",
+  },
+  {
+    id: 3,
+    name: "Olivia Davis",
+    message: "Let me know when you’re free.",
+    time: "2:10 PM",
+    unreadCount: 3,
+    phoneNumber: "3333333333",
+  },
+];
 
-// 👤 Main User schema
 const userSchema = new Schema(
   {
     phoneNumber: {
@@ -30,45 +35,52 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       trim: true,
-      index: true
+      index: true,
+    },
+    socketId: {
+      type: String,
+      // required: true,
+      // unique: true,
+      trim: true,
+      index: true,
     },
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     aboutStatus: {
       type: String,
-      default: "📻 Hey there! I am using Walkie-Talkie"
+      default: "📻 Hey there! I am using Walkie-Talkie",
     },
     status: {
       type: String,
       enum: ["online", "offline"],
-      default: "offline"
+      default: "offline",
     },
-    connections: {
-      type: [ConnectionSchema],
-      default: []
+    friendList: {
+       type: Array,
+       default: [...friendListSchema],
     },
     rooms: {
       type: [String], // Change to [Schema.Types.ObjectId] if referencing a Room model
-      default: []
+      default: [],
     },
     otpSecret: {
-      type: String
+      type: String,
     },
     generatedAt: {
       type: Date,
-      default: Date.now
+      default: Date.now,
       // expires: 300 // TTL: 5 minutes
     },
     profileImage: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   {
-    timestamps: true // Adds createdAt and updatedAt automatically
+    timestamps: true, // Adds createdAt and updatedAt automatically
   }
 );
 

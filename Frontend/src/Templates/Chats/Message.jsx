@@ -22,7 +22,6 @@ const Message = ({ message }) => {
         style={{ 
           width: "fit-content", 
           maxWidth: "85%",
-          // Responsive max-width for different screen sizes
           ...(window.innerWidth >= 640 && { maxWidth: "75%" }),
           ...(window.innerWidth >= 768 && { maxWidth: "70%" }),
           ...(window.innerWidth >= 1024 && { maxWidth: "60%" }),
