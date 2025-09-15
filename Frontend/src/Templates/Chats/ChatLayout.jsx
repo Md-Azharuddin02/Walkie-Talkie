@@ -8,6 +8,7 @@ const socket = io("http://localhost:5804");
 
 const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   const {user, currentFriend } = useContext(Store);
+  console.log(currentFriend)
 
   const sampleMessages = [
     { userId: "user1", message: "Hey, how's it going?", time: "10:00 AM", phoneNumber: "1234567890" },
@@ -139,28 +140,18 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   ];
   const [allMessages, setAllMessages] = useState([]);
 
-  useEffect(() => {
     socket.on("Message received", (data) => {
-      
-      setAllMessages((prev) => [...prev, data]);
+      console.log(data)
     });
 
     socket.on("disconnect", () => {
       console.log("Disconnected from the server!");
     });
 
-    return () => {
-      socket.off("connect");
-      socket.off("message");
-      socket.off("disconnect");
-    };
-  }, []);
-
   const SendMessage = (message) => {
     socket.emit("message", {
-      senderId: user._id,
-      senderSocketId: socket.id,
-      receiverPhoneNumber: currentFriend.phoneNumber,
+      senderPhoneNumber: user.phoneNumber,
+      recieverPhoneNumber: currentFriend.phoneNumber,
       msg: message,
       timestamp: new Date().toLocaleTimeString(),
     });

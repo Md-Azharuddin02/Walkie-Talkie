@@ -9,32 +9,22 @@ const socketServer = (server) => {
     },
   });
 
-  const userTosocket = new Map();
-  const socketTouser = new Map();
+  const onLineUsers = new Map();
 
   io.on("connection", (socket) => {
-    socket.on("new-connection", async ({userId}) => {
-      console.log("New connection established with ID:", socket.id);
-
-      let user = await UserModel.findById(userId);
-        user.socketId = socket.id;
-        await user.save();
+    socket.on("join", (data) => {
+      const {userPhoneNumber, socketId} = data
+      onLineUsers.set(userPhoneNumber,socketId)
     });
-
-    socket.on("message", (data) => async () => {
-    //  const {senderSocketId, receiverPhoneNumber, msg, timestamp} = data
-     console.log("data in socket message", data.receiverPhoneNumber)
-
-     receiverSocketId = await UserModel.findOne({receiverId})
-     console.log("  receiverSocketId", receiverSocketId.socketId)
+    socket.on("message", async (data) => {
+      const {senderPhoneNumber, recieverPhoneNumber, msg, timestamp} = data
+      console.log(onLineUsers.get(recieverSocketId))
       
-      userTosocket.set(data.userId, data.socket);
-      socketTouser.set(data.socket, data.userId);
+       const recieverSocketId= onLineUsers.get(recieverPhoneNumber)
+       console.log(recieverSocketId)
 
-      // Private message
-      socket.join(data.userId);
-      console.log(`👤 User is now online as socket ${data.userId}`);
-      io.emit("presence:update", { online: true });
+       socket.to(recieverSocketId).emit(senderPhoneNumber, msg, timestamp)
+
     });
   });
 

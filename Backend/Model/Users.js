@@ -8,7 +8,7 @@ const friendListSchema = [
     message: "Are we still on for today?",
     time: "11:20 AM",
     unreadCount: 1,
-    phoneNumber: "1111111111",
+    phoneNumber: "7777777770",
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ const friendListSchema = [
     message: "Got it, thanks!",
     time: "9:45 AM",
     unreadCount: 2,
-    phoneNumber: "2222222222",
+    phoneNumber: "9896578968",
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ const friendListSchema = [
     message: "Let me know when you’re free.",
     time: "2:10 PM",
     unreadCount: 3,
-    phoneNumber: "3333333333",
+    phoneNumber: "9333333333",
   },
 ];
 

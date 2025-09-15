@@ -1,6 +1,5 @@
 // StoreContext.js (or .ts if using TypeScript)
 import React, { createContext, useState, useMemo } from "react";
-import useFetchData from "../Custom/fetchData";
 
 export const Store = createContext(null);
 
