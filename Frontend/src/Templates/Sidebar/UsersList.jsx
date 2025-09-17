@@ -1,6 +1,5 @@
 import React, { useContext,useState } from "react";
 import { Store } from "../../Store/Store";
-import {FiSearch} from 'react-icons/fi';
 import {FaPlus, FaEllipsisV, FaUser} from 'react-icons/fa';
 import Search from './Search'
 
