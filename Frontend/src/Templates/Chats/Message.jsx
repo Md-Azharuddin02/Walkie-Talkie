@@ -4,8 +4,9 @@ import { Store } from "../../Store/Store";
 const Message = ({ message }) => {
   // const { user } = useContext(Store);
   // const isSender = user._id === message.userId;
+  console.log(message)
 
-  const isSender = message.userId === "current_user_id"; // Replace with actual user ID check
+  const isSender = message.direction === "out"; // Replace with actual user ID check
   
   return (
     <div
@@ -40,7 +41,7 @@ const Message = ({ message }) => {
           <span className={`text-sm sm:text-base leading-relaxed ${
             isSender ? "text-white" : "text-black"
           }`}>
-            {message.msg}
+            {message.message}
           </span>
         </div>
 
@@ -48,7 +49,7 @@ const Message = ({ message }) => {
         <div className={`text-xs text-right mt-1 sm:mt-2 ${
           isSender ? "text-blue-100" : "text-gray-500"
         }`}>
-          {message.timestamp}
+          {message.time}
         </div>
       </div>
     </div>

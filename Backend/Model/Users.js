@@ -58,10 +58,19 @@ const userSchema = new Schema(
       enum: ["online", "offline"],
       default: "offline",
     },
-    friendList: {
-       type: Array,
-       default: [...friendListSchema],
-    },
+    // friendList: {
+    //    type: Array,
+    //    default: [...friendListSchema],
+    // },
+    friendList: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId, 
+          ref: "User"
+        }
+      }
+    ],
+
     rooms: {
       type: [String], // Change to [Schema.Types.ObjectId] if referencing a Room model
       default: [],

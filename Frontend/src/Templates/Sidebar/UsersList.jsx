@@ -2,10 +2,11 @@ import React, { useContext,useState } from "react";
 import { Store } from "../../Store/Store";
 import {FiSearch} from 'react-icons/fi';
 import {FaPlus, FaEllipsisV, FaUser} from 'react-icons/fa';
+import Search from './Search'
 
 
 const UsersList = () => {
-  const { isCardOpen, setIsCardOpen, user, setCurrentFriend,setIsChatOpen } = useContext(Store);
+  const { user, setCurrentFriend,setIsChatOpen } = useContext(Store);
   const filterOptions = ["ALL", "Unread", "Favourite", "Groups"];
 
   return (
@@ -21,14 +22,7 @@ const UsersList = () => {
 
       {/* Search Bar */}
       <div className="p-4">
-        <div className="relative">
-          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <input 
-            type="text" 
-            placeholder="Search chats..." 
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          />
-        </div>
+       <Search/>
       </div>
 
       {/* Filter Tabs */}

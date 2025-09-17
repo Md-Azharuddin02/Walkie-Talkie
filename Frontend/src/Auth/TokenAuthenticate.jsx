@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { Store } from "../Store/Store";
-import { io } from "socket.io-client";
-const socket = io("http://localhost:5804");
+import {socket} from "../Custom/socket"
+
 
 export default function TokenAuthenticate({ children }) {
   const { user, setUser } = useContext(Store);
@@ -36,11 +36,22 @@ export default function TokenAuthenticate({ children }) {
   }, []);
 
   useEffect(() => {
-    if (authenticated) {
-      console.log(user._id)
-      socket.emit("join", {userPhoneNumber: user.phoneNumber, socketId: socket.id});
-    }
-  }, [authenticated]);
+    if (!authenticated || !user?.phoneNumber) return;
+
+    if (!socket.connected) socket.connect();
+
+    // when connected, server issues socket.id – then join
+    const onConnect = () => {
+      socket.emit("join", { userPhoneNumber: user.phoneNumber });
+    };
+
+    socket.on("connect", onConnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+      // optional: socket.disconnect(); // only if you want to end session on unmount
+    };
+  }, [authenticated, user?.phoneNumber]);
 
   if (loading) {
     return <p>Loading...</p>;

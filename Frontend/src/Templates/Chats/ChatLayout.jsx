@@ -3,158 +3,196 @@ import { Store } from "../../Store/Store";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import Footer from "./Footer";
-import { io } from "socket.io-client";
-const socket = io("http://localhost:5804");
+import { socket } from "../../Custom/socket";
 
 const ChatLayout = ({ isMobile, setIsChatOpen }) => {
-  const {user, currentFriend } = useContext(Store);
-  console.log(currentFriend)
+  const { user, currentFriend } = useContext(Store);
 
-  const sampleMessages = [
-    { userId: "user1", message: "Hey, how's it going?", time: "10:00 AM", phoneNumber: "1234567890" },
-    {
-      userId: "current_user_id",
-      message: "Pretty good! Just working on a project.",
-      time: "10:01 AM",
-    },
-    {
-      userId: "user1",
-      message: "Nice! What kind of project?",
-      time: "10:02 AM",
-    },
-    {
-      userId: "current_user_id",
-      message: "A chat application using React.",
-      time: "10:03 AM",
-    },
-    { userId: "user1", message: "Sounds fun!", time: "10:04 AM" },
-    {
-      userId: "current_user_id",
-      message: "Yeah, learning a lot while doing it.",
-      time: "10:05 AM",
-    },
-    {
-      userId: "user1",
-      message: "Are you using any backend?",
-      time: "10:06 AM",
-    },
-    {
-      userId: "current_user_id",
-      message: "Yep! Express and MongoDB.",
-      time: "10:07 AM",
-    },
-    { userId: "user1", message: "Full stack, impressive!", time: "10:08 AM" },
-    {
-      userId: "current_user_id",
-      message: "Thanks! What's new with you?",
-      time: "10:09 AM",
-    },
-    {
-      userId: "user1",
-      message: "Not much, just started learning Node.js.",
-      time: "10:10 AM",
-    },
-    {
-      userId: "current_user_id",
-      message: "Awesome, it's really powerful.",
-      time: "10:11 AM",
-    },
-    {
-      userId: "user1",
-      message: "What do you like most about it?",
-      time: "10:12 AM",
-    },
-    {
-      userId: "current_user_id",
-      message: "The simplicity and async nature.",
-      time: "10:13 AM",
-    },
-    {
-      userId: "user1",
-      message: "Yeah, async can be tricky though.",
-      time: "10:14 AM",
-    },
-    {
-      userId: "current_user_id",
-      message: "True! Promises and async/await help a lot.",
-      time: "10:15 AM",
-    },
-    {
-      userId: "user1",
-      message: "Are you deploying your app?",
-      time: "10:16 AM",
-    },
-    {
-      userId: "current_user_id",
-      message: "Planning to use Vercel for frontend.",
-      time: "10:17 AM",
-    },
-    { userId: "user1", message: "What about backend?", time: "10:18 AM" },
-    {
-      userId: "current_user_id",
-      message: "Maybe Render or Railway.",
-      time: "10:19 AM",
-    },
-    {
-      userId: "user1",
-      message: "Cool, let me know how it goes.",
-      time: "10:20 AM",
-    },
-    {
-      userId: "current_user_id",
-      message: "Sure! Will keep you posted.",
-      time: "10:21 AM",
-    },
-    {
-      userId: "user1",
-      message: "Alright, time for lunch. Talk later!",
-      time: "10:22 AM",
-    },
-    {
-      userId: "current_user_id",
-      message: "Enjoy! Catch up soon.",
-      time: "10:23 AM",
-    },
-    {
-      userId: "user1",
-      message: "Back from lunch. Ready to code!",
-      time: "11:00 AM",
-    },
-    { userId: "current_user_id", message: "Let's gooo! 🚀", time: "11:01 AM" },
-    {
-      userId: "user1",
-      message: "Have you added authentication?",
-      time: "11:02 AM",
-    },
-    {
-      userId: "current_user_id",
-      message: "Yes, using JWT tokens.",
-      time: "11:03 AM",
-    },
-    { userId: "user1", message: "Nice, that's secure.", time: "11:04 AM" },
-    {
-      userId: "current_user_id",
-      message: "Trying to implement refresh tokens next.",
-      time: "11:05 AM",
-    },
-  ];
+  // const sampleMessages = [
+
+  //   {
+  //     userId: "user1",
+  //     message: "Hey, how's it going?",
+  //     time: "10:00 AM",
+  //     phoneNumber: "1234567890",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Pretty good! Just working on a project.",
+  //     time: "10:01 AM",
+  //   },
+  //   {
+  //     userId: "user1",
+  //     message: "Nice! What kind of project?",
+  //     time: "10:02 AM",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "A chat application using React.",
+  //     time: "10:03 AM",
+  //   },
+  //   { userId: "user1", message: "Sounds fun!", time: "10:04 AM" },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Yeah, learning a lot while doing it.",
+  //     time: "10:05 AM",
+  //   },
+  //   {
+  //     userId: "user1",
+  //     message: "Are you using any backend?",
+  //     time: "10:06 AM",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Yep! Express and MongoDB.",
+  //     time: "10:07 AM",
+  //   },
+  //   { userId: "user1", message: "Full stack, impressive!", time: "10:08 AM" },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Thanks! What's new with you?",
+  //     time: "10:09 AM",
+  //   },
+  //   {
+  //     userId: "user1",
+  //     message: "Not much, just started learning Node.js.",
+  //     time: "10:10 AM",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Awesome, it's really powerful.",
+  //     time: "10:11 AM",
+  //   },
+  //   {
+  //     userId: "user1",
+  //     message: "What do you like most about it?",
+  //     time: "10:12 AM",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "The simplicity and async nature.",
+  //     time: "10:13 AM",
+  //   },
+  //   {
+  //     userId: "user1",
+  //     message: "Yeah, async can be tricky though.",
+  //     time: "10:14 AM",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "True! Promises and async/await help a lot.",
+  //     time: "10:15 AM",
+  //   },
+  //   {
+  //     userId: "user1",
+  //     message: "Are you deploying your app?",
+  //     time: "10:16 AM",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Planning to use Vercel for frontend.",
+  //     time: "10:17 AM",
+  //   },
+  //   { userId: "user1", message: "What about backend?", time: "10:18 AM" },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Maybe Render or Railway.",
+  //     time: "10:19 AM",
+  //   },
+  //   {
+  //     userId: "user1",
+  //     message: "Cool, let me know how it goes.",
+  //     time: "10:20 AM",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Sure! Will keep you posted.",
+  //     time: "10:21 AM",
+  //   },
+  //   {
+  //     userId: "user1",
+  //     message: "Alright, time for lunch. Talk later!",
+  //     time: "10:22 AM",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Enjoy! Catch up soon.",
+  //     time: "10:23 AM",
+  //   },
+  //   {
+  //     userId: "user1",
+  //     message: "Back from lunch. Ready to code!",
+  //     time: "11:00 AM",
+  //   },
+  //   { userId: "current_user_id", message: "Let's gooo! 🚀", time: "11:01 AM" },
+  //   {
+  //     userId: "user1",
+  //     message: "Have you added authentication?",
+  //     time: "11:02 AM",
+  //   },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Yes, using JWT tokens.",
+  //     time: "11:03 AM",
+  //   },
+  //   { userId: "user1", message: "Nice, that's secure.", time: "11:04 AM" },
+  //   {
+  //     userId: "current_user_id",
+  //     message: "Trying to implement refresh tokens next.",
+  //     time: "11:05 AM",
+  //   },
+  // ];
+  
   const [allMessages, setAllMessages] = useState([]);
 
-    socket.on("Message received", (data) => {
-      console.log(data)
-    });
+  useEffect(() => {
+    const onReceived = (data) => {
+      setAllMessages((prev) => [
+        ...prev,
+        {
+          userId: data.senderPhoneNumber,
+          message: data.msg,
+          time: data.timestamp,
+          phoneNumber: data.senderPhoneNumber,
+          direction: "in",
+        },
+      ]);
+    };
 
-    socket.on("disconnect", () => {
+    const onDisconnect = () => {
       console.log("Disconnected from the server!");
-    });
+    };
+
+    socket.on("received-message", onReceived);
+    socket.on("disconnect", onDisconnect);
+
+    return () => {
+      socket.off("received-message", onReceived);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, []);
 
   const SendMessage = (message) => {
-    socket.emit("message", {
+    const payload = {
       senderPhoneNumber: user.phoneNumber,
       recieverPhoneNumber: currentFriend.phoneNumber,
       msg: message,
       timestamp: new Date().toLocaleTimeString(),
-    });
+    };
+
+    // optimistic append
+    setAllMessages((prev) => [
+      ...prev,
+      {
+        userId: user.phoneNumber,
+        message,
+        time: payload.timestamp,
+        phoneNumber: user.phoneNumber,
+        direction: "out",
+      },
+    ]);
+
+    socket.emit("send-message", payload);
   };
 
   return (

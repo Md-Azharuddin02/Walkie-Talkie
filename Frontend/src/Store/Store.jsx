@@ -4,7 +4,6 @@ import React, { createContext, useState, useMemo } from "react";
 export const Store = createContext(null);
 
 export const StoreProvider = ({ children }) => {
-  const [isCardOpen, setIsCardOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("userlist");
   const [user, setUser] = useState(null);
   const defaultUser = user?.friendList[0] || null;
@@ -15,8 +14,6 @@ export const StoreProvider = ({ children }) => {
 
   const contextValue = useMemo(
     () => ({
-      isCardOpen,
-      setIsCardOpen,
       activeTab,
       setActiveTab,
       user,
@@ -28,7 +25,7 @@ export const StoreProvider = ({ children }) => {
       isChatOpen, setIsChatOpen,
       currentTask, setCurrentTask,
     }),
-    [isCardOpen, currentTask, setCurrentTask, activeTab, user, currentFriend, setCurrentFriend, isSidebarOpen, isChatOpen, setIsChatOpen]
+    [ currentTask, setCurrentTask, activeTab, user, currentFriend, setCurrentFriend, isSidebarOpen, isChatOpen, setIsChatOpen]
   );
 
   return <Store.Provider value={contextValue}>{children}</Store.Provider>;
