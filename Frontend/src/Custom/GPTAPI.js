@@ -1,43 +1,125 @@
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const API_KEY = "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";
+const API_KEY = "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";
 
-export default async function getDeepSeekResponseStream(prompt, onData, onDone) {
+
+export default async function getDeepSeekResponseStream(
+  prompt,
+  onData,     
+  onDone,   
+  signal,   
+  opts = {}   
+) {
   if (!API_KEY) throw new Error("API key is missing.");
 
-  let retries = 3;
-  const wait = (ms) => new Promise((res) => setTimeout(res, ms));
+  const model = opts.model || "x-ai/grok-4-fast:free";
+  const { imageUrl } = opts;
 
-  while (retries > 0) {
-    const response = await fetch(API_URL, {
+  const content = imageUrl
+    ? [
+        { type: "text", text: prompt },
+        { type: "image_url", image_url: { url: imageUrl } },
+      ]
+    : [{ type: "text", text: prompt }];
+
+  const backoff = (attempt) =>
+    new Promise((r) => setTimeout(r, Math.min(3000 * attempt, 8000)));
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const res = await fetch(API_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": window.location.origin,
-        "X-Title": "MyReactApp"
+        "HTTP-Referer":
+          typeof window !== "undefined" ? window.location.origin : "http://localhost",
+        "X-Title": "walkie-talkie",
       },
       body: JSON.stringify({
-        model: "deepseek/deepseek-chat-v3-0324:free",
+        model,
         stream: true,
-        messages: [{ role: "user", content: prompt }]
-      })
+        messages: [{ role: "user", content }],
+      }),
+      signal,
     });
 
-    if (response.status === 429) {
-      retries--;
-      console.warn("🕒 Rate limit hit. Retrying in 3s...");
-      await wait(3000);
-      continue;
+    if (res.status === 429) {
+      if (attempt < 3) {
+        console.warn(`🕒 Rate limit (429). Retrying in ${attempt * 3}s...`);
+        await backoff(attempt);
+        continue;
+      }
+      throw new Error("Too many requests. Please try again later.");
     }
 
-    if (!response.ok || !response.body) {
-      throw new Error(`OpenRouter error: ${response.status} ${response.statusText}`);
+    if (!res.ok || !res.body) {
+      const text = await safeReadText(res);
+      throw new Error(`OpenRouter error: ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`);
     }
 
-    // Process stream as you already do
-    // ...
-    return; // success path
+    const reader = res.body.getReader();
+    console.log("🚀 Stream started", reader);
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || ""; 
+
+        for (const raw of lines) {
+          const line = raw.trim();
+          if (!line || !line.startsWith("data:")) continue;
+
+          const payload = line.slice(5).trim();
+          if (payload === "[DONE]") {
+         
+            continue;
+          }
+
+          try {
+            const json = JSON.parse(payload);
+            const delta = json?.choices?.[0]?.delta?.content || "";
+            if (delta) onData(delta);
+          } catch {
+            
+          }
+        }
+      }
+
+      try {
+        const leftover = buffer.trim();
+        if (leftover && leftover.startsWith("data:")) {
+          const payload = leftover.slice(5).trim();
+          if (payload && payload !== "[DONE]") {
+            const j = JSON.parse(payload);
+            const finalText =
+              (j?.choices?.[0]?.message && j.choices[0].message.content) ||
+              (j?.choices?.[0]?.delta && j.choices[0].delta.content) ||
+              "";
+            if (finalText) onDone(finalText);
+            else onDone();
+          } else {
+            onDone();
+          }
+        } else {
+          onDone();
+        }
+      } catch {
+        onDone();
+      }
+
+      return; 
+    } finally {
+      try { reader.releaseLock(); } catch {}
+    }
   }
 
   throw new Error("Too many requests. Please try again later.");
+}
+
+async function safeReadText(res) {
+  try { return await res.text(); } catch { return ""; }
 }

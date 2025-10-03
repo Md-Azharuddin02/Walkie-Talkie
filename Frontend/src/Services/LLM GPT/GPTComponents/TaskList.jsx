@@ -12,23 +12,6 @@ const TaskList = () => {
   "Fix mobile chat layout",
   "Add loader for streaming response",
   "Implement auto-scroll in chat",
-  "Store chat history in localStorage",
-  "Improve responsiveness of sidebar",
-  "Create login UI",
-  "Add JWT authentication",
-  "Fix duplicate key warning",
-  "Add timestamp to each chat message",
-  "Design chat UI for dark mode",
-  "Set up Express server",
-  "Connect MongoDB to backend",
-  "Send message to API",
-  "Implement refresh tokens",
-  "Show online/offline status",
-  "Add search to friend list",
-  "Create reusable button component",
-  "Fix scroll overflow bug",
-  "Deploy frontend to Vercel",
-  "Deploy backend to Railway"
 ];
 
   return (
