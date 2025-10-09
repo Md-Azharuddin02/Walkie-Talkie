@@ -11,11 +11,9 @@ const socketServer = (server) => {
 
   // Map phone -> socketId
   const onlineUsers = new Map();
-  // Optional reverse map if you want faster cleanup
   const socketToPhone = new Map();
 
   io.on("connection", (socket) => {
-    // client will emit: { userPhoneNumber }
     socket.on("join", ({ userPhoneNumber }) => {
       if (!userPhoneNumber) return;
       onlineUsers.set(userPhoneNumber, socket.id);
@@ -23,9 +21,8 @@ const socketServer = (server) => {
       console.log(`JOIN: ${userPhoneNumber} -> ${socket.id}`);
     });
 
-    // client will emit: { senderPhoneNumber, recieverPhoneNumber, msg, timestamp }
     socket.on("send-message", (data) => {
-      const { senderPhoneNumber, recieverPhoneNumber, msg, timestamp } = data || {};
+      const { senderPhoneNumber, recieverName, recieverPhoneNumber, msg, timestamp } = data || {};
       if (!recieverPhoneNumber) return;
 
       const receiverSocketId = onlineUsers.get(recieverPhoneNumber);
@@ -38,6 +35,8 @@ const socketServer = (server) => {
         senderPhoneNumber,
         msg,
         timestamp,
+        recieverName,
+
       });
     });
 

@@ -1,32 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-const friendListSchema = [
-  {
-    id: 1,
-    name: "Emma Johnson",
-    message: "Are we still on for today?",
-    time: "11:20 AM",
-    unreadCount: 1,
-    phoneNumber: "7777777770",
-  },
-  {
-    id: 2,
-    name: "Liam Smith",
-    message: "Got it, thanks!",
-    time: "9:45 AM",
-    unreadCount: 2,
-    phoneNumber: "9896578968",
-  },
-  {
-    id: 3,
-    name: "Olivia Davis",
-    message: "Let me know when you’re free.",
-    time: "2:10 PM",
-    unreadCount: 3,
-    phoneNumber: "9333333333",
-  },
-];
+
 
 const userSchema = new Schema(
   {
@@ -58,10 +33,7 @@ const userSchema = new Schema(
       enum: ["online", "offline"],
       default: "offline",
     },
-    // friendList: {
-    //    type: Array,
-    //    default: [...friendListSchema],
-    // },
+
     friendList: [
       {
         userId: {
@@ -72,7 +44,7 @@ const userSchema = new Schema(
     ],
 
     rooms: {
-      type: [String], // Change to [Schema.Types.ObjectId] if referencing a Room model
+      type: [String],
       default: [],
     },
     otpSecret: {
@@ -89,9 +61,8 @@ const userSchema = new Schema(
     },
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt automatically
+    timestamps: true, 
   }
 );
 
-// Export model
 module.exports = model("User", userSchema);

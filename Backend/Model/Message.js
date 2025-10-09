@@ -3,9 +3,10 @@ const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema({
         sender: {type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
-        //message for one on one
         receiver: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
 
+
+        
         //message for the group.
         group: {type: mongoose.Schema.Types.ObjectId, ref: "Group"},
 

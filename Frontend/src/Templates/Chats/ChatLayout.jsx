@@ -8,6 +8,7 @@ import { socket } from "../../Custom/socket";
 const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   const { user, currentFriend } = useContext(Store);
 
+  console.log("Current Friend:", currentFriend);
   // const sampleMessages = [
 
   //   {
@@ -154,6 +155,7 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
           message: data.msg,
           time: data.timestamp,
           phoneNumber: data.senderPhoneNumber,
+          name: data.recieverName,
           direction: "in",
         },
       ]);
@@ -176,6 +178,7 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
     const payload = {
       senderPhoneNumber: user.phoneNumber,
       recieverPhoneNumber: currentFriend.phoneNumber,
+      recieverName: currentFriend.name,
       msg: message,
       timestamp: new Date().toLocaleTimeString(),
     };

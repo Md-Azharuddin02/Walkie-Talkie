@@ -2,11 +2,10 @@ import React, { useContext } from "react";
 import { Store } from "../../Store/Store";
 
 const Message = ({ message }) => {
-  // const { user } = useContext(Store);
-  // const isSender = user._id === message.userId;
+
   console.log(message)
 
-  const isSender = message.direction === "out"; // Replace with actual user ID check
+  const isSender = message.direction === "out"; 
   
   return (
     <div
@@ -33,7 +32,7 @@ const Message = ({ message }) => {
         <div className={`font-semibold mb-1 text-xs sm:text-sm ${
           isSender ? "text-blue-100" : "text-red-600"
         }`}>
-          {message.userId}
+          {isSender ? "You" : message.name}
         </div>
 
         {/* Message Text */}
