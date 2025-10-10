@@ -29,6 +29,7 @@ const {
   addUser,
   getUserProfile,
   updateProfile,
+  getAllFriendList,
 } = require("../Controller/users");
 const { handleGetOtp, handleVerifyOtp } = require("../Auth/OTP_Validation");
 const { getMessages, sendMessage } = require("../Controller/messages");
@@ -41,9 +42,11 @@ router.get("/user", authenticate, getUser);
 // POST /api/users          → add a new user (no file upload here)
 router.post("/user", addUser);
 
+router.post("/get-all-friendlist", getAllFriendList);
+
 // POST /api/update-profile → update name/about + one image
 //   • “upload.single('image')” must come before your controller
-router.post("/update-profile",authenticate, upload.single("image"), updateProfile);
+router.post("/update-profile",authenticate,  upload.single("image"), updateProfile);
 
 // You can put OTP routes or other protected routes here:
 router.post("/auth/send-otp", handleGetOtp);

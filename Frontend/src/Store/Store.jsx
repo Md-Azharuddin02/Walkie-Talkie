@@ -6,8 +6,7 @@ export const Store = createContext(null);
 export const StoreProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState("userlist");
   const [user, setUser] = useState(null);
-  const defaultUser = user?.friendList[0] || null;
-  const [currentFriend, setCurrentFriend] = useState(defaultUser);
+  const [currentFriend, setCurrentFriend] = useState([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentTask, setCurrentTask] = useState(0);

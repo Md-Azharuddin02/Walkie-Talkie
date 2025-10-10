@@ -1,28 +1,28 @@
 // server/Controller/users.js
+const { request } = require("express");
 const UserModel = require("../Model/Users");
 
 // ─── GET ALL USERS ───────────────────────────────────────────────────────────────
-// GET /api/user
 async function getUser(req, res) {
   const { _id: userId } = req.user;
 
   try {
-    const user = await UserModel
-      .findById(userId)
-      .select('name, phoneNumber profileImage, aboutStatus, socketId, friendList ') // only what you need
-      .lean()    
+    const user = await UserModel.findById(userId)
+      .select(
+        "name, phoneNumber profileImage, aboutStatus, socketId, friendList "
+      ) // only what you need
+      .lean()
       .exec();
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
     return res.status(200).json(user);
   } catch (err) {
-    console.error('Error in getUser:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error("Error in getUser:", err);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
-
 
 // ─── ADD A USER (no file here) ────────────────────────────────────────────────────
 async function addUser(req, res) {
@@ -33,6 +33,30 @@ async function addUser(req, res) {
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: "Failed to add user" });
+  }
+}
+
+// ─── GET ALL FRIENDS OF A USER ───────────────────────────────────────────────────
+async function getAllFriendList(req, res) {
+  const {userId}  = req.body
+  
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    const user = await UserModel.findById(userId).populate("friendList.userId");
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const friendsProfiles = user.friendList.map(friend => friend.userId);
+    
+    return res.status(200).json({ friendList: friendsProfiles });
+  } catch (error) {
+    console.error("Error in getAllFriendList:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
 
@@ -69,14 +93,14 @@ const getUserProfile = async (req, res) => {
 };
 
 // ─── UPDATE PROFILE (name, about, + image upload) ────────────────────────────────
-const {uploadOnCloudinary} = require("../Service/cloudinary");
+const { uploadOnCloudinary } = require("../Service/cloudinary");
 const updateProfile = async (req, res) => {
   const { _id: userId } = req.user;
   const { name, about } = req.body; // renamed field
   const profileImagePath = req.file?.path;
 
   // Validate inputs
-  if (!name || !about ) {
+  if (!name || !about) {
     return res.status(400).json({
       success: false,
       error: "Name and aboutStatus are required",
@@ -96,7 +120,10 @@ const updateProfile = async (req, res) => {
     user.name = name;
     user.aboutStatus = about;
     if (profileImagePath) {
-      const cloudinaryResponse = await uploadOnCloudinary(profileImagePath, user.name);
+      const cloudinaryResponse = await uploadOnCloudinary(
+        profileImagePath,
+        user.name
+      );
       user.profileImage = cloudinaryResponse.autoCropUrl;
     }
 
@@ -125,4 +152,5 @@ module.exports = {
   addUser,
   getUserProfile,
   updateProfile,
+  getAllFriendList,
 };
