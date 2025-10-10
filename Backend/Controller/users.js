@@ -7,12 +7,11 @@ async function getUser(req, res) {
   const { _id: userId } = req.user;
 
   try {
-    const user = await UserModel.findById(userId)
-      .select(
-        "name, phoneNumber profileImage, aboutStatus, socketId, friendList "
-      ) // only what you need
-      .lean()
-      .exec();
+const user = await UserModel.findById(userId)
+  .select("phoneNumber name profileImage aboutStatus socketId friendList")
+  .populate("friendList", "phoneNumber name profileImage") // Populate friend details
+  .lean()
+  .exec();
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });

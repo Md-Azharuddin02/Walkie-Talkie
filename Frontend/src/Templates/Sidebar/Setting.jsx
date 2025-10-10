@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { 
   User, 
   Shield, 
@@ -9,6 +9,7 @@ import {
   HelpCircle, 
   LogOut,
 } from 'lucide-react';
+import { Store } from '../../Store/Store';
 
 const Settings = () => {
   const settingsItems = [
@@ -55,7 +56,7 @@ const Settings = () => {
       bgColor: 'bg-blue-500/10'
     }
   ];
-
+  const {user} = useContext(Store);
   return (
     <div className="h-full bg-gray-900 text-white flex flex-col">
       {/* Header - Fixed */}
@@ -72,8 +73,8 @@ const Settings = () => {
               <User className="w-8 h-8 md:w-9 md:h-9 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg md:text-xl font-medium text-white">Prince</h3>
-              <p className="text-gray-400 text-sm md:text-base mt-1 truncate">Hey there! I am using WhatsApp.</p>
+              <h3 className="text-lg md:text-xl font-medium text-white">{user.name}</h3>
+              <p className="text-gray-400 text-sm md:text-base mt-1 truncate">{user.aboutStatus}</p>
             </div>
           </div>
         </div>
