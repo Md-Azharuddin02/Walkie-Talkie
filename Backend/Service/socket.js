@@ -22,7 +22,7 @@ const socketServer = (server) => {
     });
 
     socket.on("send-message", (data) => {
-      const { senderPhoneNumber, recieverName, recieverPhoneNumber, msg, timestamp } = data || {};
+      const { senderPhoneNumber, recieverName, recieverPhoneNumber, message, direction, timestamp } = data || {};
       if (!recieverPhoneNumber) return;
 
       const receiverSocketId = onlineUsers.get(recieverPhoneNumber);
@@ -33,9 +33,12 @@ const socketServer = (server) => {
 
       io.to(receiverSocketId).emit("received-message", {
         senderPhoneNumber,
-        msg,
+        recieverPhoneNumber,
+        message,
         timestamp,
         recieverName,
+        direction: direction === "out" ? "in" : "out",
+
 
       });
     });

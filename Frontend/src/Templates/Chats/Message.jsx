@@ -3,8 +3,6 @@ import { Store } from "../../Store/Store";
 
 const Message = ({ message }) => {
 
-  console.log(message)
-
   const isSender = message.direction === "out"; 
   
   return (
@@ -32,7 +30,7 @@ const Message = ({ message }) => {
         <div className={`font-semibold mb-1 text-xs sm:text-sm ${
           isSender ? "text-blue-100" : "text-red-600"
         }`}>
-          {isSender ? "You" : message.name}
+          {isSender ? "You" : message.recieverName}
         </div>
 
         {/* Message Text */}
