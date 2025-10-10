@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { Store } from "../../Store/Store";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
@@ -7,10 +7,8 @@ import { socket } from "../../Custom/socket";
 
 const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   const { user, currentFriend } = useContext(Store);
-
-
   const [allMessages, setAllMessages] = useState([]);
-
+  const chatEndRef = useRef(null);
 
   function saveMessage(chatId, message) {
     let messages = JSON.parse(localStorage.getItem(chatId)) || [];
@@ -19,14 +17,10 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   }
 
   function getMessagesWithFriend(senderPhoneNumber, recieverPhoneNumber) {
-    console.log("senderPhoneNumber", senderPhoneNumber);
-    console.log("recieverPhoneNumber", recieverPhoneNumber);
     if (!senderPhoneNumber || !recieverPhoneNumber) return [];
     const chatId = [senderPhoneNumber, recieverPhoneNumber].sort().join("_");
-    console.log("chatId", chatId);
     return JSON.parse(localStorage.getItem(chatId)) || [];
   }
-
 
   useEffect(() => {
     if (user && currentFriend) {
@@ -35,9 +29,9 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
     }
   }, [currentFriend, user]);
 
-
   useEffect(() => {
     const onReceived = (data) => {
+      console.log("Received message data:", data.recieverName);
       const chatId = [data.senderPhoneNumber, data.recieverPhoneNumber].sort().join("_");
       saveMessage(chatId, data);
       setAllMessages((prev) => [
@@ -47,7 +41,7 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
           recieverPhoneNumber: data.recieverPhoneNumber,
           message: data.message,
           time: data.timestamp,
-          name: data.recieverName,
+          recieverName: data.recieverName,
           direction: data.direction,
         },
       ]);
@@ -60,13 +54,11 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
     socket.on("received-message", onReceived);
     socket.on("disconnect", onDisconnect);
 
-
     return () => {
       socket.off("received-message", onReceived);
       socket.off("disconnect", onDisconnect);
     };
   }, []);
-
 
   const SendMessage = (message) => {
     const payload = {
@@ -74,26 +66,34 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
       recieverPhoneNumber: currentFriend.phoneNumber,
       recieverName: currentFriend.name,
       message,
-      timestamp: new Date().toLocaleTimeString(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+
       direction: "out",
     };
 
-    // optimistic append
+    // Optimistic append
     setAllMessages((prev) => [
       ...prev,
       {
         userId: user.phoneNumber,
         message,
-        time: payload.timestamp,
+        timestamp: payload.timestamp,
         phoneNumber: user.phoneNumber,
         direction: "out",
       },
     ]);
+
     const chatId = [payload.senderPhoneNumber, payload.recieverPhoneNumber].sort().join("_");
     saveMessage(chatId, payload);
 
     socket.emit("send-message", payload);
   };
+
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [allMessages]);
 
   return (
     <div className="w-full h-full flex flex-col bg-white">
@@ -104,8 +104,7 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
           <Message key={index} message={message} />
         ))}
       </div>
-
-      {/* Footer - Using responsive Footer component */}
+      <div ref={chatEndRef} />
       <Footer SendMessage={SendMessage} />
     </div>
   );

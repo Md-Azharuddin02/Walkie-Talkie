@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
-import { Store } from "../../Store/Store";
+import React from "react";
 
 const Message = ({ message }) => {
-
+  console.log("Rendering message:", message);
   const isSender = message.direction === "out"; 
   
   return (
@@ -46,7 +45,7 @@ const Message = ({ message }) => {
         <div className={`text-xs text-right mt-1 sm:mt-2 ${
           isSender ? "text-blue-100" : "text-gray-500"
         }`}>
-          {message.time}
+          {message.timestamp}
         </div>
       </div>
     </div>
