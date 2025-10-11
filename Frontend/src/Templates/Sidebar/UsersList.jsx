@@ -11,6 +11,7 @@ const UsersList = () => {
 
   const isProduction = import.meta.env.MODE === "production";
 
+
   const API_BASE_URL = isProduction
     ? "https://walkie-talkie-backend-25gu.onrender.com"
     : "http://localhost:5804";
@@ -72,9 +73,9 @@ const UsersList = () => {
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto px-4">
         {friendList.map((friend) => (
-          <div key={friend.id} className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { setCurrentFriend(friend), setIsChatOpen(true) }}>
+          <div key={friend.id} className="flex items-center space-x-3 p-3 hover:bg-gray-100 rounded-lg cursor-pointer" onClick={() => { setCurrentFriend(friend), setIsChatOpen(true) }}>
             <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center" >
-              <FaUser className="text-gray-600" />
+             {friend.profileImage ? (  <img src={friend.profileImage} alt="" className="rounded-full" />) :   <FaUser className="text-gray-600" />}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">{friend.name}</p>

@@ -95,11 +95,11 @@ const getUserProfile = async (req, res) => {
 const { uploadOnCloudinary } = require("../Service/cloudinary");
 const updateProfile = async (req, res) => {
   const { _id: userId } = req.user;
-  const { name, about } = req.body; // renamed field
+  const { name, about } = req.body; 
   const profileImagePath = req.file?.path;
 
   // Validate inputs
-  if (!name || !about) {
+  if (!name && !about && !profileImagePath) {
     return res.status(400).json({
       success: false,
       error: "Name and aboutStatus are required",

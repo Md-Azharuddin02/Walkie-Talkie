@@ -150,7 +150,6 @@ function Register() {
       const response = await axios.post(`${API_BASE_URL}/api/auth/send-otp`, {
         phoneNumber: phone,
       });
-      console.log("OTP sent response:", response.data);
 
       if (response.data.success) {
         setIsOtpSent(true);

@@ -8,7 +8,7 @@ import { IoArrowBackSharp } from "react-icons/io5";
 const ChatHeader = ({isMobile, setIsChatOpen}) => {
   const { user, currentFriend } = useContext(Store);
 
-  const profileUrl = user?.profileImage || img;
+  const profileUrl = currentFriend?.profileImage || img;
   const displayName = currentFriend?.name
 
 

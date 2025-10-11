@@ -10,8 +10,6 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   const [allMessages, setAllMessages] = useState([]);
   const chatEndRef = useRef(null);
 
-  console.log("Current Friend:", user);
-
   function saveMessage(chatId, message) {
     let messages = JSON.parse(localStorage.getItem(chatId)) || [];
     messages.push(message);
