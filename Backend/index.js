@@ -26,7 +26,9 @@ app.use(cors({
   origin: (o, cb) => (!o || allowed.includes(o)) ? cb(null, true) : cb(new Error(`CORS blocked: ${o}`)),
   credentials: true,
   methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["Set-Cookie"]
+
 }));
 
 app.use(express.json());

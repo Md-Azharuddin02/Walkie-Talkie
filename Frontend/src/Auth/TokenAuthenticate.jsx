@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { Store } from "../Store/Store";
-import {socket} from "../Custom/socket"
+import { socket } from "../Custom/socket"
 
 
 export default function TokenAuthenticate({ children }) {
@@ -15,6 +15,9 @@ export default function TokenAuthenticate({ children }) {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user`, {
           method: "GET",
           credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
         if (!response.ok) {
           throw new Error("Not authenticated");
