@@ -12,7 +12,7 @@ export default function TokenAuthenticate({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch(`http://localhost:5804/api/user`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user`, {
           credentials: "include",
           mode: "cors",
         });

@@ -1,8 +1,6 @@
 import { io } from "socket.io-client";
-export const socket = io("http://localhost:5804",
-  {
-    autoConnect: false,         // we will connect after auth
-    withCredentials: true,
-    transports: ["websocket"],  // optional but helps in dev
-  }
-);
+export const socket = io(import.meta.env.VITE_API_BASE_URL, {
+  autoConnect: false,
+  withCredentials: true,
+  transports: ["websocket"], 
+});

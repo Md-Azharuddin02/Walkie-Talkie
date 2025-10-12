@@ -1,7 +1,3 @@
-const API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const API_KEY = "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";
-
-
 export default async function getDeepSeekResponseStream(
   prompt,
   onData,     
@@ -25,10 +21,10 @@ export default async function getDeepSeekResponseStream(
     new Promise((r) => setTimeout(r, Math.min(3000 * attempt, 8000)));
 
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const res = await fetch(API_URL, {
+    const res = await fetch(import.meta.env.VITE_GPT_API_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${import.meta.env.VITE_GPT_API_KEY}`,
         "Content-Type": "application/json",
         "HTTP-Referer":
           typeof window !== "undefined" ? window.location.origin : "http://localhost",
