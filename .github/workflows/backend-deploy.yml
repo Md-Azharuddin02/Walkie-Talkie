@@ -1,0 +1,36 @@
+name: Deploy Backend to Render
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "backend/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate secret present
+        run: |
+          test -n "${{ secrets.RENDER_DEPLOY_HOOK }}" || { echo "Missing RENDER_DEPLOY_HOOK"; exit 1; }
+
+      - name: Trigger Render Deployment (with retries)
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          for i in 1 2 3; do
+            echo "Attempt $i..."
+            # Render accepts GET; use --fail so curl exits non-zero on 4xx/5xx
+            curl --fail --show-error --silent "$HOOK" && exit 0
+            sleep 5
+          done
+          echo "Failed to trigger Render after 3 attempts" >&2
+          exit 1
