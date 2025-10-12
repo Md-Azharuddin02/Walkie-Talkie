@@ -21,15 +21,14 @@ if (!fs.existsSync(uploadsDir)) {
 // ─── Middleware ────────────────────────────────────────────────────────────────
 
 
-app.use(
-  cors({
-    origin: [process.env.API_BASE_URL, "https://walkie-talkie-stg.netlify.app"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
-    exposedHeaders: ["set-cookie"],
-  })
-);
+const allowed = (process.env.FRONTEND_BASE_URL || "").split(",").map(s => s.trim()).filter(Boolean);
+app.use(cors({
+  origin: (o, cb) => (!o || allowed.includes(o)) ? cb(null, true) : cb(new Error(`CORS blocked: ${o}`)),
+  credentials: true,
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -50,9 +49,8 @@ app.use("/api/auth/send-otp", otpLimiter);
 app.use("/api/auth/verify-otp", otpLimiter);
 
 // Trust proxy if in production (for secure cookies, etc.)
-if (process.env.NODE_ENV === "production") {
-  app.set("trust proxy", 1);
-}
+app.set("trust proxy", 1);
+
 
 // ─── Database & Routes ────────────────────────────────────────────────────────
 const connectDB = require("./DBConnection");
