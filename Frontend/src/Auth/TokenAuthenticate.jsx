@@ -13,6 +13,7 @@ export default function TokenAuthenticate({ children }) {
     const checkAuth = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user`, {
+          method: "GET",
           credentials: "include",
           mode: "cors",
         });

@@ -3,7 +3,7 @@ const { Server } = require("socket.io");
 const socketServer = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: process.env.API_BASE_URL,
       methods: ["GET", "POST"],
       credentials: true,
     },

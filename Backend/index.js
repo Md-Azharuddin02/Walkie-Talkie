@@ -23,7 +23,7 @@ if (!fs.existsSync(uploadsDir)) {
 
 app.use(
   cors({
-    origin: process.env.API_BASE_URL,
+    origin: [process.env.API_BASE_URL, "https://walkie-talkie-stg.netlify.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
