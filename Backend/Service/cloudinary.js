@@ -1,10 +1,18 @@
 import { v2 as cloudinary } from "cloudinary";
 
 // Cloudinary configuration
+const CLOUD_NAME = process.env.CLOUD_NAME;
+const API_KEY = process.env.API_KEY;
+const API_SECRET = process.env.API_SECRET;
+
+if(!CLOUD_NAME || !API_KEY || !API_SECRET) {
+  throw new Error("Cloudinary configuration variables are missing.");
+}
+
 cloudinary.config({
-  cloud_name: process.env.Cloud_name,
-  api_key: process.env.Api_key,
-  api_secret: process.env.Api_secret,
+  CLOUD_NAME: CLOUD_NAME,
+  API_KEY: API_KEY,
+  API_SECRET: API_SECRET,
 });
 
 async function uploadOnCloudinary(img, name) {
@@ -12,10 +20,9 @@ async function uploadOnCloudinary(img, name) {
   const publicId = `${name}-${timestamp}`;
   try {
     // Upload an image
-    const uploadResult = await cloudinary.uploader.upload(img,
-      { public_id: publicId}
-    );
-
+    const uploadResult = await cloudinary.uploader.upload(img, {
+      public_id: publicId,
+    });
 
     // Optimized image URL
     const optimizeUrl = cloudinary.url(publicId, {
@@ -38,4 +45,4 @@ async function uploadOnCloudinary(img, name) {
   }
 }
 
-export {uploadOnCloudinary };
+export { uploadOnCloudinary };
