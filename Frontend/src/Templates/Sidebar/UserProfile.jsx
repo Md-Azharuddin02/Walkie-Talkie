@@ -4,13 +4,6 @@ import { FaUser } from "react-icons/fa";
 
 const UserProfile = () => {
 
-  const isProduction = import.meta.env.MODE === "production";
-
-  const API_BASE_URL = isProduction
-    ? "https://walkie-talkie-backend-25gu.onrender.com"
-    : "http://localhost:5804";
-
-
   const { user } = useContext(Store);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -46,7 +39,7 @@ const UserProfile = () => {
   const handleChangeSubmit = async () => {
     setIsSubmitting(true);
 
-    const response = await fetch(`${API_BASE_URL}/api/update-profile`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/update-profile`, {
       method: "POST",
       credentials: "include",
       mode: "cors",

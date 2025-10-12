@@ -10,11 +10,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 
-const isProduction = import.meta.env.MODE === "production";
 
-const API_BASE_URL = isProduction
-  ? "https://walkie-talkie-backend-25gu.onrender.com"
-  : "http://localhost:5804";
 
 
 
@@ -147,7 +143,7 @@ function Register() {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/send-otp`, {
+      const response = await axios.post(`${ import.meta.env.VITE_API_BASE_URL}/api/auth/send-otp`, {
         phoneNumber: phone,
       });
 
@@ -177,7 +173,7 @@ function Register() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/api/auth/verify-otp`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/auth/verify-otp`,
         {
           phoneNumber: phone,
           otp: otpValue,

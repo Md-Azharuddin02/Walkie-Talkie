@@ -9,17 +9,11 @@ const UsersList = () => {
   const [friendList, setFriendList] = useState([]);
   const filterOptions = ["ALL", "Unread", "Favourite", "Groups"];
 
-  const isProduction = import.meta.env.MODE === "production";
-
-
-  const API_BASE_URL = isProduction
-    ? "https://walkie-talkie-backend-25gu.onrender.com"
-    : "http://localhost:5804";
 
   async function fetchFriendList(id) {
     if (!id) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/api/get-all-friendlist`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/get-all-friendlist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: id }),
