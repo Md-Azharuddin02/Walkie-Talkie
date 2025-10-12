@@ -15,7 +15,6 @@ export default function TokenAuthenticate({ children }) {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/user`, {
           method: "GET",
           credentials: "include",
-          mode: "cors",
         });
         if (!response.ok) {
           throw new Error("Not authenticated");

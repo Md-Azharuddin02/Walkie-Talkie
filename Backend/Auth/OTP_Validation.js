@@ -83,11 +83,12 @@ async function handleVerifyOtp(req, res) {
       const token = generateToken(user);
 
       // Set cookie with appropriate options
-      res.cookie("token", token, {
+      res.cookie(process.env.SESSION_COOKIE_NAME || "token", token, {
         httpOnly: true,
         secure: config.JWT_SECRET,
         sameSite: "None", 
         path: "/",
+        partitioned: true,  
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       });
 
