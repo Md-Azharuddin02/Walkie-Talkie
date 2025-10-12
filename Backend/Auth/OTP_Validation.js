@@ -87,6 +87,7 @@ async function handleVerifyOtp(req, res) {
         httpOnly: true,
         secure: true,
         sameSite: "none", 
+        partitioned: true, 
         path: "/",
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       });

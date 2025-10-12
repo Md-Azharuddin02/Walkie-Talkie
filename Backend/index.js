@@ -10,7 +10,7 @@ const fs = require("fs");
 const router = require("./Routes/Routes");
 
 const app = express();
-const server= http.createServer(app)
+const server = http.createServer(app);
 
 // ─── Ensure uploads folder exists ─────────────────────────────────────────────
 const uploadsDir = path.join(__dirname, "uploads");
@@ -20,16 +20,22 @@ if (!fs.existsSync(uploadsDir)) {
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
 
-
-const allowed = (process.env.FRONTEND_BASE_URL || "").split(",").map(s => s.trim()).filter(Boolean);
-app.use(cors({
-  origin: (o, cb) => (!o || allowed.includes(o)) ? cb(null, true) : cb(new Error(`CORS blocked: ${o}`)),
-  credentials: true,
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-    exposedHeaders: ["Set-Cookie"]
-
-}));
+const allowed = (process.env.FRONTEND_BASE_URL || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+app.use(
+  cors({
+    origin: (o, cb) =>
+      !o || allowed.includes(o)
+        ? cb(null, true)
+        : cb(new Error(`CORS blocked: ${o}`)),
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["Set-Cookie"],
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -53,15 +59,13 @@ app.use("/api/auth/verify-otp", otpLimiter);
 // Trust proxy if in production (for secure cookies, etc.)
 app.set("trust proxy", 1);
 
-
 // ─── Database & Routes ────────────────────────────────────────────────────────
 const connectDB = require("./DBConnection");
 connectDB(); // connect to MongoDB
 app.use("/api", router); // mount your API routes
 
-
-const {socketServer}= require('./Service/socket')
-socketServer(server)
+const { socketServer } = require("./Service/socket");
+socketServer(server);
 
 // ─── Start Listening ─────────────────────────────────────────────────────────
 // const PORT = process.env.PORT || 5804;
