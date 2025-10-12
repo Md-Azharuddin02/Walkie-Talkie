@@ -88,7 +88,6 @@ async function handleVerifyOtp(req, res) {
         secure: true,
         sameSite: "none", 
         path: "/",
-        domain: '.onrender.com',
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       });
 
