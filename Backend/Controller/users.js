@@ -95,8 +95,6 @@ async function addNewFriend(req, res) {
    const { phoneNumber } = req.body;
     const senderId = req.user._id;
 
-console.log("addNewFriend called with:", { senderId });
-
     if (!phoneNumber) {
       return res.status(400).json({ message: "Phone number is required" });
     }
