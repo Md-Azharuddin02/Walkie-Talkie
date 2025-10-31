@@ -10,6 +10,7 @@ const authenticate = (req, res, next) => {
       ? req.cookies[COOKIE_NAME]
       : null;
 
+
   // 2) Try Authorization: Bearer <jwt>
   const auth = req.get("authorization");
   const headerToken =

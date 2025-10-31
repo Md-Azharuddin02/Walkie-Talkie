@@ -10,6 +10,7 @@ export const StoreProvider = ({ children }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentTask, setCurrentTask] = useState(0);
+  const [isCardOpen, setIsCardOpen] = useState(false);
 
   const contextValue = useMemo(
     () => ({
@@ -23,8 +24,9 @@ export const StoreProvider = ({ children }) => {
       setIsSidebarOpen,
       isChatOpen, setIsChatOpen,
       currentTask, setCurrentTask,
+      isCardOpen, setIsCardOpen
     }),
-    [ currentTask, setCurrentTask, activeTab, user, currentFriend, setCurrentFriend, isSidebarOpen, isChatOpen, setIsChatOpen]
+    [ currentTask, setCurrentTask, activeTab, user, currentFriend, setCurrentFriend, isSidebarOpen, isChatOpen, setIsChatOpen, isCardOpen, setIsCardOpen]
   );
 
   return <Store.Provider value={contextValue}>{children}</Store.Provider>;

@@ -7,11 +7,11 @@ async function getUser(req, res) {
   const { _id: userId } = req.user;
 
   try {
-const user = await UserModel.findById(userId)
-  .select("phoneNumber name profileImage aboutStatus socketId friendList")
-  .populate("friendList", "phoneNumber name profileImage") // Populate friend details
-  .lean()
-  .exec();
+    const user = await UserModel.findById(userId)
+      .select("phoneNumber name profileImage aboutStatus socketId friendList")
+      .populate("friendList", "phoneNumber name profileImage") // Populate friend details
+      .lean()
+      .exec();
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -23,35 +23,133 @@ const user = await UserModel.findById(userId)
   }
 }
 
-// ─── ADD A USER (no file here) ────────────────────────────────────────────────────
-async function addUser(req, res) {
-  const user = req.body;
+// ─── ADD A NEW FRIEND  ────────────────────────────────────────────────────
+async function searchNewFriend(req, res) {
+  const { phoneNumber } = req.body;
+  const user = req.user;
+  console.log("Request to add friend with phone number:", user);
+
+  if (!phoneNumber) {
+    return res
+      .status(400)
+      .json({ isAddable: false, error: "Phone number is required" });
+  }
+
   try {
-    const newUser = new UserModel(user);
-    await newUser.save();
-    res.status(201).json(newUser);
+    // Find the friend by phone number
+    const friendToAdd = await UserModel.findOne({ phoneNumber });
+    if (!friendToAdd) {
+      return res
+        .status(404)
+        .json({
+          isAddable: false,
+          error: "User with this phone number not found",
+        });
+    }
+
+    // Prevent adding oneself
+    if (friendToAdd._id.equals(user._id)) {
+      return res
+        .status(400)
+        .json({
+          isAddable: false,
+          error: "You cannot add yourself as a friend",
+        });
+    }
+
+    // Check if already friends
+    const alreadyFriend = user.friendList.some(
+      (friend) => friend.userId.toString() === friendToAdd._id.toString()
+    );
+
+    if (alreadyFriend) {
+      return res
+        .status(409)
+        .json({
+          isFriend: true,
+          msg: "This user is already your friend",
+          friendId: friendToAdd.id,
+          userName: friendToAdd.name,
+          friendProfileImage: friendToAdd.profileImage,
+        });
+    }
+
+    return res
+      .status(200)
+      .json({
+        isFriend: false,
+        msg: "Add him as a friend.",
+        userId: friendToAdd.id,
+        userName: friendToAdd.name,
+        userProfileImage: friendToAdd.profileImage,
+      });
+
   } catch (error) {
-    res.status(500).json({ error: "Failed to add user" });
+    console.error("❌ Error in addNewFriend:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
 
+async function addNewFriend(req, res) {
+  try {
+   const { phoneNumber } = req.body;
+    const senderId = req.user._id;
+
+console.log("addNewFriend called with:", { senderId });
+
+    if (!phoneNumber) {
+      return res.status(400).json({ message: "Phone number is required" });
+    }
+
+    const [user, friendDetails] = await Promise.all([
+      UserModel.findById(senderId),
+      UserModel.findOne({phoneNumber} ),
+    ]);
+
+    console.log("Adding friend:", friendDetails);
+    console.log("For user:", user);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!friendDetails) return res.status(404).json({ message: "Friend not found" });
+
+    user.friendList.push({ userId: friendDetails._id });
+    await user.save();
+
+    return res.status(200).json({
+      message: "Friend added successfully",
+      friend: {
+        id: friendDetails._id,
+        name: friendDetails.name,
+        phoneNumber: friendDetails.phoneNumber,
+      },
+    });
+  } catch (error) {
+    console.error("Error in addNewFriend:", error);
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+}
+
+
 // ─── GET ALL FRIENDS OF A USER ───────────────────────────────────────────────────
 async function getAllFriendList(req, res) {
-  const {userId}  = req.body
-  
+  const { userId } = req.body;
+
   if (!userId) {
     return res.status(400).json({ error: "User ID is required" });
   }
 
   try {
     const user = await UserModel.findById(userId).populate("friendList.userId");
-    
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const friendsProfiles = user.friendList.map(friend => friend.userId);
-    
+    const friendsProfiles = user.friendList.map((friend) => friend.userId);
+
     return res.status(200).json({ friendList: friendsProfiles });
   } catch (error) {
     console.error("Error in getAllFriendList:", error);
@@ -95,7 +193,7 @@ const getUserProfile = async (req, res) => {
 const { uploadOnCloudinary } = require("../Service/cloudinary");
 const updateProfile = async (req, res) => {
   const { _id: userId } = req.user;
-  const { name, about } = req.body; 
+  const { name, about } = req.body;
   const profileImagePath = req.file?.path;
 
   // Validate inputs
@@ -148,7 +246,8 @@ const updateProfile = async (req, res) => {
 
 module.exports = {
   getUser,
-  addUser,
+  searchNewFriend,
+  addNewFriend,
   getUserProfile,
   updateProfile,
   getAllFriendList,

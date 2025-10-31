@@ -8,6 +8,8 @@ import { IoArrowBackSharp } from "react-icons/io5";
 const ChatHeader = ({isMobile, setIsChatOpen}) => {
   const { user, currentFriend } = useContext(Store);
 
+console.log(img)
+
   const profileUrl = currentFriend?.profileImage || img;
   const displayName = currentFriend?.name
 
@@ -25,11 +27,13 @@ const ChatHeader = ({isMobile, setIsChatOpen}) => {
       {/* Left Section */}
       {isMobile && <IoArrowBackSharp className='mr-3 cursor-pointer' onClick={()=>setIsChatOpen(false)} />}
       <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer flex-1 min-w-0">
+        
         <img
           src={profileUrl}
           alt="Profile"
           className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
         />
+        
         <h2 className="text-base sm:text-lg font-semibold text-gray-800 truncate">
           {displayName}
         </h2>

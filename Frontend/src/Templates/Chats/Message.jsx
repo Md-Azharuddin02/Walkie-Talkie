@@ -1,7 +1,6 @@
 import React from "react";
 
 const Message = ({ message }) => {
-  console.log("Rendering message:", message);
   const isSender = message.direction === "out"; 
   
   return (

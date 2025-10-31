@@ -1,15 +1,17 @@
-import React, { useContext, useState, useEffect } from 'react';
-import ResponsiveSidebar from '../Templates/Sidebar/ResponsiveSidebar/';
-import UsersList from '../Templates/Sidebar/UsersList';
-import UserProfile from '../Templates/Sidebar/UserProfile';
-import Settings from '../Templates/Sidebar/Setting';
-import TaskList from '../Services/LLM GPT/GPTComponents/TaskList';
-import GPTLayout from '../Services/LLM GPT/GPT Layout/GPTLayout';
-import ChatLayout from '../Templates/Chats/ChatLayout';
-import { Store } from '../Store/Store';
+import React, { useContext, useState, useEffect } from "react";
+import ResponsiveSidebar from "../Templates/Sidebar/ResponsiveSidebar/";
+import UsersList from "../Templates/Sidebar/UsersList";
+import UserProfile from "../Templates/Sidebar/UserProfile";
+import Settings from "../Templates/Sidebar/Setting";
+import TaskList from "../Services/LLM GPT/GPTComponents/TaskList";
+import GPTLayout from "../Services/LLM GPT/GPT Layout/GPTLayout";
+import ChatLayout from "../Templates/Chats/ChatLayout";
+import { Store } from "../Store/Store";
+import AddFriendCard from "../Templates/Sidebar/AddFriend";
 
 const Layout = () => {
-  const { activeTab, currentFriend,isChatOpen, setIsChatOpen } = useContext(Store);
+  const { activeTab, currentFriend, isChatOpen, setIsChatOpen, isCardOpen } =
+    useContext(Store);
   const [isMobile, setIsMobile] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(false);
 
@@ -19,23 +21,27 @@ const Layout = () => {
     };
 
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   // Render left (tab) sidebar content
   const renderTabComponent = () => {
     switch (activeTab) {
-      case 'userlist':
-        return <UsersList onSelectFriend={(friend) => setSelectedFriend(friend)} />;
-      case 'profile':
+      case "userlist":
+        return (
+          <UsersList onSelectFriend={(friend) => setSelectedFriend(friend)} />
+        );
+      case "profile":
         return <UserProfile />;
-      case 'settings':
+      case "settings":
         return <Settings />;
-      case 'taskList':
+      case "taskList":
         return <TaskList />;
       default:
-        return <UsersList onSelectFriend={(friend) => setSelectedFriend(friend)} />;
+        return (
+          <UsersList onSelectFriend={(friend) => setSelectedFriend(friend)} />
+        );
     }
   };
 
@@ -54,24 +60,16 @@ const Layout = () => {
       }
 
       // If no friend is selected, show UsersList or fallback
-      if (activeTab === 'userlist') {
-        return <UsersList onSelectFriend={(friend) => setSelectedFriend(friend)} />;
+      if (activeTab === "userlist") {
+        return (
+          <UsersList
+            isMobile={isMobile}
+            onSelectFriend={(friend) => setSelectedFriend(friend)}
+          />
+        );
       }
 
       return renderTabComponent();
-    }
-
-    // DESKTOP VIEW
-    switch (activeTab) {
-      case 'userlist':
-        return <ChatLayout selectedFriend={selectedFriend} />;
-      case 'profile':
-      case 'settings':
-        return <ChatLayout />;
-      case 'taskList':
-        return <GPTLayout />;
-      default:
-        return <ChatLayout />;
     }
   };
 
@@ -94,6 +92,7 @@ const Layout = () => {
         role="main"
         aria-label="Main content"
       >
+        {isMobile === false && isCardOpen=== true? <AddFriendCard />: null}
         {renderMainContent()}
       </main>
     </div>

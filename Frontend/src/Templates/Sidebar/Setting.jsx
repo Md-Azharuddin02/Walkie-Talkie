@@ -5,7 +5,6 @@ import {
   Lock, 
   MessageCircle, 
   Bell, 
-  Keyboard, 
   HelpCircle, 
   LogOut,
 } from 'lucide-react';
@@ -41,13 +40,7 @@ const Settings = () => {
       color: 'text-orange-500',
       bgColor: 'bg-orange-500/10'
     },
-    {
-      icon: Keyboard,
-      title: 'Keyboard shortcuts',
-      subtitle: 'Quick actions',
-      color: 'text-purple-500',
-      bgColor: 'bg-purple-500/10'
-    },
+
     {
       icon: HelpCircle,
       title: 'Help',
@@ -70,7 +63,7 @@ const Settings = () => {
         <div className="px-6 pb-4">
           <div className="flex items-center space-x-4 p-4 bg-gray-800 rounded-lg">
             <div className="w-16 h-16 md:w-18 md:h-18 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <User className="w-8 h-8 md:w-9 md:h-9 text-white" />
+             <img src={user.profileImage} alt="" className='rounded-full' /> 
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-lg md:text-xl font-medium text-white">{user.name}</h3>

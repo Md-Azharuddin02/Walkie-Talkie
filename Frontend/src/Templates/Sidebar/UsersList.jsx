@@ -2,12 +2,16 @@ import React, { useContext, useState, useEffect } from "react";
 import { Store } from "../../Store/Store";
 import { FaPlus, FaEllipsisV, FaUser } from 'react-icons/fa';
 import Search from './Search'
+import img from '../../assets/images/dummy.avif';
+import AddFriendCard from "./AddFriend";
 
 
-const UsersList = () => {
-  const { user, setCurrentFriend, setIsChatOpen } = useContext(Store);
+
+const UsersList = ({isMobile}) => {
+  const { user, setCurrentFriend, setIsChatOpen, setIsCardOpen, isCardOpen } = useContext(Store);
   const [friendList, setFriendList] = useState([]);
   const filterOptions = ["ALL", "Unread", "Favourite", "Groups"];
+  console.log("User in UsersList:", friendList);
 
 
   async function fetchFriendList(id) {
@@ -41,7 +45,7 @@ const UsersList = () => {
       <div className="flex justify-between items-center p-4 border-b border-gray-200">
         <h1 className="text-xl lg:text-2xl font-bold">Chats</h1>
         <div className="flex space-x-3">
-          <FaPlus className="text-gray-600 cursor-pointer text-lg" onClick={() => setIsCardOpen(!isCardOpen)} />
+          <FaPlus className="text-gray-600 cursor-pointer text-lg" onClick={() => setIsCardOpen(true)} />
           <FaEllipsisV className="text-gray-600 cursor-pointer text-lg" />
         </div>
       </div>
@@ -66,10 +70,11 @@ const UsersList = () => {
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto px-4">
-        {friendList.map((friend) => (
+        {isCardOpen && isMobile && <AddFriendCard isMobile={isMobile}/>}
+        {friendList.map((friend) =>(
           <div key={friend.id} className="flex items-center space-x-3 p-3 hover:bg-gray-100 rounded-lg cursor-pointer" onClick={() => { setCurrentFriend(friend), setIsChatOpen(true) }}>
             <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center" >
-             {friend.profileImage ? (  <img src={friend.profileImage} alt="" className="rounded-full" />) :   <FaUser className="text-gray-600" />}
+             <img src={friend.profileImage || img} alt="" className="rounded-full" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">{friend.name}</p>

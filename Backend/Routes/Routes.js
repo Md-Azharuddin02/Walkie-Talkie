@@ -26,10 +26,11 @@ const upload = multer({ storage });
 // ─── CONTROLLERS ────────────────────────────────────────────────────────────────
 const {
   getUser,
-  addUser,
+  searchNewFriend,
   getUserProfile,
   updateProfile,
   getAllFriendList,
+  addNewFriend
 } = require("../Controller/users");
 const { handleGetOtp, handleVerifyOtp } = require("../Auth/OTP_Validation");
 const { getMessages, sendMessage } = require("../Controller/messages");
@@ -40,7 +41,8 @@ const { authenticate } = require("../Auth/tokenAuthenticate");
 router.get("/user", authenticate, getUser);
 
 // POST /api/users          → add a new user (no file upload here)
-router.post("/user", addUser);
+router.post("/search-new-friend", authenticate, searchNewFriend);
+router.post("/add-new-friend", authenticate, addNewFriend);
 
 router.post("/get-all-friendlist", getAllFriendList);
 
