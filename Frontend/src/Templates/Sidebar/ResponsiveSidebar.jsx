@@ -4,7 +4,7 @@ import { FaEnvelope, FaUsers, FaCog, FaUser } from "react-icons/fa";
 import { VscRobot } from "react-icons/vsc";
 
 const ResponsiveSidebar = () => {
-  const { setActiveTab, activeTab, isChatOpen } = useContext(Store);
+  const { setActiveTab, activeTab, isChatOpen, user } = useContext(Store);
 
   const topIcons = [
     {
@@ -50,7 +50,9 @@ const ResponsiveSidebar = () => {
     >
       {IconComponent === "profile" ? (
         <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
-          <FaUser className="text-gray-600" />
+          {user?.profileImage? <img src={user.profileImage} className="border-none rounded-full p-0" /> : (
+            <FaUser className={`text-xl ${isActive ? "text-blue-600" : "text-gray-600"}`} />
+          )}
         </div>
       ) : (
         <IconComponent
