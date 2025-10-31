@@ -26,69 +26,57 @@ async function getUser(req, res) {
 // ─── ADD A NEW FRIEND  ────────────────────────────────────────────────────
 async function searchNewFriend(req, res) {
   const { phoneNumber } = req.body;
-  const user = req.user;
-  console.log("Request to add friend with phone number:", user);
 
   if (!phoneNumber) {
-    return res
-      .status(400)
-      .json({ isAddable: false, error: "Phone number is required" });
+    return res.status(400).json({ isAddable: false, error: "Phone number is required" });
   }
 
   try {
-    // Find the friend by phone number
+    // fetch fresh user from DB
+    const user = await UserModel.findById(req.user._id);
+
     const friendToAdd = await UserModel.findOne({ phoneNumber });
     if (!friendToAdd) {
-      return res
-        .status(404)
-        .json({
-          isAddable: false,
-          error: "User with this phone number not found",
-        });
+      return res.status(404).json({
+        isAddable: false,
+        error: "User with this phone number not found",
+      });
     }
 
-    // Prevent adding oneself
     if (friendToAdd._id.equals(user._id)) {
-      return res
-        .status(400)
-        .json({
-          isAddable: false,
-          error: "You cannot add yourself as a friend",
-        });
+      return res.status(400).json({
+        isAddable: false,
+        error: "You cannot add yourself as a friend",
+      });
     }
 
-    // Check if already friends
     const alreadyFriend = user.friendList.some(
       (friend) => friend.userId.toString() === friendToAdd._id.toString()
     );
 
     if (alreadyFriend) {
-      return res
-        .status(409)
-        .json({
-          isFriend: true,
-          msg: "This user is already your friend",
-          friendId: friendToAdd.id,
-          userName: friendToAdd.name,
-          friendProfileImage: friendToAdd.profileImage,
-        });
+      return res.status(409).json({
+        isFriend: true,
+        msg: "This user is already your friend",
+        friendId: friendToAdd.id,
+        userName: friendToAdd.name,
+        friendProfileImage: friendToAdd.profileImage,
+      });
     }
 
-    return res
-      .status(200)
-      .json({
-        isFriend: false,
-        msg: "Add him as a friend.",
-        userId: friendToAdd.id,
-        userName: friendToAdd.name,
-        userProfileImage: friendToAdd.profileImage,
-      });
-
+    return res.status(200).json({
+      isFriend: false,
+      msg: "Add him as a friend.",
+      userId: friendToAdd.id,
+      userName: friendToAdd.name,
+      userProfileImage: friendToAdd.profileImage,
+    });
   } catch (error) {
-    console.error("❌ Error in addNewFriend:", error);
+    console.error("❌ Error in searchNewFriend:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }
+
 
 async function addNewFriend(req, res) {
   try {

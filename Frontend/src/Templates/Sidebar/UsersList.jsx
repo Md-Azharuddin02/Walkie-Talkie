@@ -7,11 +7,10 @@ import AddFriendCard from "./AddFriend";
 
 
 
-const UsersList = ({isMobile}) => {
+const UsersList = () => {
   const { user, setCurrentFriend, setIsChatOpen, setIsCardOpen, isCardOpen } = useContext(Store);
   const [friendList, setFriendList] = useState([]);
   const filterOptions = ["ALL", "Unread", "Favourite", "Groups"];
-  console.log("User in UsersList:", friendList);
 
 
   async function fetchFriendList(id) {
@@ -23,6 +22,7 @@ const UsersList = ({isMobile}) => {
         body: JSON.stringify({ userId: id }),
       });
       const data = await response.json();
+      console.log("Fetched friend list data:", data);
       if (response.ok) {
         setFriendList(data.friendList);
       }
@@ -35,7 +35,7 @@ const UsersList = ({isMobile}) => {
       fetchFriendList(user._id);
       setFriendList(user.friendList);
     }
-  }, []);
+  }, [user.friendList]);
 
 
 
@@ -70,7 +70,7 @@ const UsersList = ({isMobile}) => {
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto px-4">
-        {isCardOpen && isMobile && <AddFriendCard isMobile={isMobile}/>}
+        {isCardOpen && <AddFriendCard/>}
         {friendList.map((friend) =>(
           <div key={friend.id} className="flex items-center space-x-3 p-3 hover:bg-gray-100 rounded-lg cursor-pointer" onClick={() => { setCurrentFriend(friend), setIsChatOpen(true) }}>
             <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center" >
