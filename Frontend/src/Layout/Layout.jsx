@@ -4,17 +4,55 @@ import React, {
   useEffect,
   useMemo,
   useCallback,
+  Suspense,
+  lazy,
 } from "react";
 import ResponsiveSidebar from "../Templates/Sidebar/ResponsiveSidebar/";
-import UsersList from "../Templates/Sidebar/UsersList";
-import UserProfile from "../Templates/Sidebar/UserProfile";
-import Settings from "../Templates/Sidebar/Setting";
-import TaskList from "../Services/LLM GPT/GPTComponents/TaskList";
-import ChatLayout from "../Templates/Chats/ChatLayout";
 import { Store } from "../Store/Store";
-import AddFriendCard from "../Templates/Sidebar/AddFriend";
 
-//Custom hook for responsive breakpoint
+// Lazy load components
+const UsersList = lazy(() => import("../Templates/Sidebar/UsersList"));
+const UserProfile = lazy(() => import("../Templates/Sidebar/UserProfile"));
+const Settings = lazy(() => import("../Templates/Sidebar/Setting"));
+const TaskList = lazy(() => import("../Services/LLM GPT/GPTComponents/TaskList"));
+const ChatLayout = lazy(() => import("../Templates/Chats/ChatLayout"));
+const AddFriendCard = lazy(() => import("../Templates/Sidebar/AddFriend"));
+
+// Loading fallback component
+const LoadingFallback = ({ componentName = "component" }) => (
+  <div className="flex items-center justify-center h-full min-h-[200px]">
+    <div className="text-gray-500">Loading {componentName}...</div>
+  </div>
+);
+
+// Error boundary for lazy-loaded components
+class LazyComponentErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Lazy component error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex items-center justify-center h-full min-h-[200px]">
+          <div className="text-red-500">Failed to load component.</div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Custom hook for responsive breakpoint
 const useIsMobile = (breakpoint = 1024) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
 
@@ -32,7 +70,7 @@ const Layout = () => {
     useContext(Store);
   const isMobile = useIsMobile();
 
-  //When a friend is selected
+  // When a friend is selected
   const handleSelectFriend = useCallback(
     (friend) => {
       setCurrentFriend(friend);
@@ -41,30 +79,80 @@ const Layout = () => {
     [setCurrentFriend, setIsChatOpen]
   );
 
-  //Tab components (memoized)
+  // Tab components (memoized with lazy loading)
   const renderTabComponent = useMemo(() => {
     const components = {
-      userlist: <UsersList onSelectFriend={handleSelectFriend} />,
-      profile: <UserProfile />,
-      settings: <Settings />,
-      taskList: <TaskList />,
+      userlist: (
+        <LazyComponentErrorBoundary>
+          <Suspense fallback={<LoadingFallback componentName="Users List" />}>
+            <UsersList onSelectFriend={handleSelectFriend} />
+          </Suspense>
+        </LazyComponentErrorBoundary>
+      ),
+      profile: (
+        <LazyComponentErrorBoundary>
+          <Suspense fallback={<LoadingFallback componentName="User Profile" />}>
+            <UserProfile />
+          </Suspense>
+        </LazyComponentErrorBoundary>
+      ),
+      settings: (
+        <LazyComponentErrorBoundary>
+          <Suspense fallback={<LoadingFallback componentName="Settings" />}>
+            <Settings />
+          </Suspense>
+        </LazyComponentErrorBoundary>
+      ),
+      taskList: (
+        <LazyComponentErrorBoundary>
+          <Suspense fallback={<LoadingFallback componentName="Task List" />}>
+            <TaskList />
+          </Suspense>
+        </LazyComponentErrorBoundary>
+      ),
     };
     return components[activeTab] || components.userlist;
   }, [activeTab, handleSelectFriend]);
 
-  //Mobile-specific main area
+  // Mobile-specific main area
   const renderMobileView = useMemo(() => {
     if (isChatOpen) {
       return (
-        <ChatLayout
-          currentFriend={currentFriend}
-          isMobile
-          setIsChatOpen={setIsChatOpen}
-        />
+        <LazyComponentErrorBoundary>
+          <Suspense fallback={<LoadingFallback componentName="Chat" />}>
+            <ChatLayout
+              currentFriend={currentFriend}
+              isMobile
+              setIsChatOpen={setIsChatOpen}
+            />
+          </Suspense>
+        </LazyComponentErrorBoundary>
       );
     }
     return renderTabComponent;
   }, [isChatOpen, currentFriend, renderTabComponent, setIsChatOpen]);
+
+  // Desktop chat layout
+  const desktopChatLayout = useMemo(() => (
+    <LazyComponentErrorBoundary>
+      <Suspense fallback={<LoadingFallback componentName="Chat" />}>
+        <ChatLayout
+          currentFriend={currentFriend}
+          isMobile={false}
+          setIsChatOpen={setIsChatOpen}
+        />
+      </Suspense>
+    </LazyComponentErrorBoundary>
+  ), [currentFriend, setIsChatOpen]);
+
+  // Add friend card for desktop
+  const addFriendCard = useMemo(() => (
+    <LazyComponentErrorBoundary>
+      <Suspense fallback={<LoadingFallback componentName="Add Friend" />}>
+        <AddFriendCard />
+      </Suspense>
+    </LazyComponentErrorBoundary>
+  ), []);
 
   return (
     <div className="w-full h-screen flex bg-gray-50 overflow-hidden">
@@ -88,14 +176,8 @@ const Layout = () => {
         role="main"
         aria-label="Main content"
       >
-        {!isMobile && isCardOpen && <AddFriendCard />}
-        {isMobile ? renderMobileView : (
-          <ChatLayout
-            currentFriend={currentFriend}
-            isMobile={false}
-            setIsChatOpen={setIsChatOpen}
-          />
-        )}
+        {!isMobile && isCardOpen && addFriendCard}
+        {isMobile ? renderMobileView : desktopChatLayout}
       </main>
     </div>
   );
