@@ -30,7 +30,8 @@ const {
   getUserProfile,
   updateProfile,
   getAllFriendList,
-  addNewFriend
+  addNewFriend,
+  searchCurrentFriend,
 } = require("../Controller/users");
 const { handleGetOtp, handleVerifyOtp } = require("../Auth/OTP_Validation");
 const { getMessages, sendMessage } = require("../Controller/messages");
@@ -43,6 +44,7 @@ router.get("/user", authenticate, getUser);
 // POST /api/users          → add a new user (no file upload here)
 router.post("/search-new-friend", authenticate, searchNewFriend);
 router.post("/add-new-friend", authenticate, addNewFriend);
+// router.post("/search-current-friend", authenticate, searchCurrentFriend);
 
 router.post("/get-all-friendlist", getAllFriendList);
 

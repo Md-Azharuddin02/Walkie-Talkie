@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
-// import debounce from "lodash/debounce";
+import debounce from "lodash/debounce";
 
 export default function Search() {
   const [query, setQuery] = useState("");
@@ -8,49 +8,49 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const abortRef = useRef(null);
 
-  // const fetchUsers = async (term) => {
-  //   if (!term?.trim()) {
-  //     setResult([]);
-  //     setLoading(false);
-  //     return;
-  //   }
+  const fetchUsers = async (term) => {
+    if (!term?.trim()) {
+      setResult([]);
+      setLoading(false);
+      return;
+    }
 
-  //   if (abortRef.current) abortRef.current.abort();
-  //   const controller = new AbortController();
-  //   abortRef.current = controller;
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch(
-  //       `https://dummyjson.com/users/search?q=${encodeURIComponent(term)}`,
-  //       { signal: controller.signal }
-  //     );
-  //     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  //     const data = await res.json();
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `https://dummyjson.com/users/search?q=${encodeURIComponent(term)}`,
+        { signal: controller.signal }
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
 
-  //     setResult(Array.isArray(data?.users) ? data.users : []);
-  //   } catch (e) {
-  //     if (e.name !== "AbortError") {
-  //       console.error(e);
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      setResult(Array.isArray(data?.users) ? data.users : []);
+    } catch (e) {
+      if (e.name !== "AbortError") {
+        console.error(e);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // // Create a stable debounced function (runs once)
-  // // const debouncedFetch = useMemo(
-  // //   // () => debounce(fetchUsers, 400), 
-  // //   []
-  // // );
+  const debouncedFetch = useMemo(
+    () => debounce(fetchUsers, 400), 
+    []
+  );
 
-  // // Clean up debounce + abort on unmount
-  // useEffect(() => {
-  //   return () => {
-  //     debouncedFetch.cancel();
-  //     if (abortRef.current) abortRef.current.abort();
-  //   };
-  // }, [debouncedFetch]);
+  // Clean up debounce + abort on unmount
+  useEffect(() => {
+    return () => {
+      debouncedFetch.cancel();
+      if (abortRef.current) abortRef.current.abort();
+    };
+  }, [debouncedFetch]);
 
   const handleOnChange = (e) => {
     const val = e.target.value;

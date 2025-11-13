@@ -110,7 +110,7 @@ function Register() {
 
 
   const validatePhone = () => {
-    const phoneRegex = /^[6-9]\d{9}$/; // Indian mobile number validation
+    const phoneRegex = /^[6-9]\d{9}$/; 
     if (!phone || !phoneRegex.test(phone)) {
       setErrors({ phone: "Please enter a valid Indian mobile number" });
       return false;

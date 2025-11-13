@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { Store } from "../Store/Store";
 import { socket } from "../Custom/socket"
+import Loader from "../Components/Loader.jsx";
 
 
 export default function TokenAuthenticate({ children }) {
@@ -57,7 +58,7 @@ export default function TokenAuthenticate({ children }) {
   }, [authenticated, user?.phoneNumber]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
 
   if (!authenticated) {

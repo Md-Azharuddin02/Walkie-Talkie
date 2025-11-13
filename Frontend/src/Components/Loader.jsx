@@ -1,25 +1,30 @@
-// Loader.jsx
-import React from 'react';
-
-const Loader = () => {
+import React from "react";
+export default function Loader() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="relative">
-        {/* Outer spinning ring */}
-        <div className="w-16 h-16 border-4 border-transparent border-t-blue-500 border-r-purple-500 rounded-full animate-spin"></div>
+        {/* Outer rotating ring */}
+        <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-500 border-r-purple-500 animate-spin w-24 h-24"></div>
         
-        {/* Inner pulsing circle */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
+        {/* Middle pulsing ring */}
+        <div className="absolute inset-2 rounded-full border-4 border-transparent border-b-pink-500 border-l-indigo-400 animate-spin w-20 h-20" style={{ animationDuration: '1.5s', animationDirection: 'reverse' }}></div>
+        
+        {/* Inner glow circle */}
+        <div className="absolute inset-6 rounded-full bg-purple-100 animate-pulse w-12 h-12 flex items-center justify-center">
+          <div className="w-6 h-6 bg-indigo-500 rounded-full"></div>
         </div>
         
-        {/* Loading text */}
-        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-          <p className="text-sm font-medium text-gray-600 animate-pulse">Loading...</p>
+        {/* Orbiting dots */}
+        <div className="absolute inset-0 animate-spin w-24 h-24" style={{ animationDuration: '3s' }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-indigo-500 rounded-full shadow-lg"></div>
+        </div>
+        <div className="absolute inset-0 animate-spin w-24 h-24" style={{ animationDuration: '3s', animationDelay: '1s' }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-purple-500 rounded-full shadow-lg"></div>
+        </div>
+        <div className="absolute inset-0 animate-spin w-24 h-24" style={{ animationDuration: '3s', animationDelay: '2s' }}>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-pink-500 rounded-full shadow-lg"></div>
         </div>
       </div>
     </div>
   );
-};
-
-export default Loader;
+}
