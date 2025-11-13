@@ -10,6 +10,7 @@ import React, {
 import ResponsiveSidebar from "../Templates/Sidebar/ResponsiveSidebar/";
 import { Store } from "../Store/Store";
 
+
 // Lazy load components
 const UsersList = lazy(() => import("../Templates/Sidebar/UsersList"));
 const UserProfile = lazy(() => import("../Templates/Sidebar/UserProfile"));
@@ -17,6 +18,8 @@ const Settings = lazy(() => import("../Templates/Sidebar/Setting"));
 const TaskList = lazy(() => import("../Services/LLM GPT/GPTComponents/TaskList"));
 const ChatLayout = lazy(() => import("../Templates/Chats/ChatLayout"));
 const AddFriendCard = lazy(() => import("../Templates/Sidebar/AddFriend"));
+const ChatLoader = lazy(() => import("../Components/ChatLoader"));
+const UserListLoader = lazy(() => import("../Components/UserListLoader"));
 
 // Loading fallback component
 const LoadingFallback = ({ componentName = "component" }) => (
@@ -84,7 +87,7 @@ const Layout = () => {
     const components = {
       userlist: (
         <LazyComponentErrorBoundary>
-          <Suspense fallback={<LoadingFallback componentName="Users List" />}>
+          <Suspense fallback={<UserListLoader componentName="Users List" />}>
             <UsersList onSelectFriend={handleSelectFriend} />
           </Suspense>
         </LazyComponentErrorBoundary>
@@ -119,7 +122,7 @@ const Layout = () => {
     if (isChatOpen) {
       return (
         <LazyComponentErrorBoundary>
-          <Suspense fallback={<LoadingFallback componentName="Chat" />}>
+          <Suspense fallback={<ChatLoader componentName="Chat" />}>
             <ChatLayout
               currentFriend={currentFriend}
               isMobile
@@ -135,7 +138,7 @@ const Layout = () => {
   // Desktop chat layout
   const desktopChatLayout = useMemo(() => (
     <LazyComponentErrorBoundary>
-      <Suspense fallback={<LoadingFallback componentName="Chat" />}>
+      <Suspense fallback={<ChatLoader componentName="Chat" />}>
         <ChatLayout
           currentFriend={currentFriend}
           isMobile={false}

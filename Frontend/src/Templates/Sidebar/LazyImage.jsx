@@ -1,33 +1,28 @@
 import React, { useState } from "react";
-import img from '../../assets/images/dummy.avif';
+import fallbackImg from "../../assets/images/dummy.avif";
 
-const LazyImage = ({ src, alt, className, ...props }) => {
-  const [imageSrc, setImageSrc] = useState(src || img);
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  const handleError = () => {
-    setImageSrc(img);
-  };
-
-  const handleLoad = () => {
-    setImageLoaded(true);
-  };
+const LazyImage = ({ src, alt, className = "", ...props }) => {
+  const [imageSrc, setImageSrc] = useState(src);
+  const [loaded, setLoaded] = useState(false);
 
   return (
-    <>
-      {!imageLoaded && (
-        <div className={`bg-gray-300 animate-pulse ${className}`} />
+    <div className={`relative overflow-hidden ${className}`}>
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse rounded-full" />
       )}
+
       <img
         {...props}
         src={imageSrc}
         alt={alt}
-        className={`${className} ${!imageLoaded ? 'hidden' : 'block'}`}
-        onError={handleError}
-        onLoad={handleLoad}
+        onLoad={() => setLoaded(true)}
+        onError={() => setImageSrc(fallbackImg)}
+        className={`absolute inset-0 w-full h-full object-cover rounded-full transition-opacity duration-200 ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
         loading="lazy"
       />
-    </>
+    </div>
   );
 };
 
