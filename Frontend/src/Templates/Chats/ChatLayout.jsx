@@ -1,14 +1,18 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Store } from "../../Store/Store";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import Footer from "./Footer";
 import { socket } from "../../Custom/socket";
+const UserDetailsCard = lazy(() => import("./UserDetailCard"));
+const FriendDetails = lazy(() => import("./FriendDetails"));
 
 const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   const { user, currentFriend } = useContext(Store);
   const [allMessages, setAllMessages] = useState([]);
   const chatEndRef = useRef(null);
+  const [isUserDetailOpen, setIsUserDetailOpen] = useState(false);
+  const [friendDetailCardOpen, setFriendDetailCardOpen] = useState(false);
 
   function saveMessage(chatId, message) {
     let messages = JSON.parse(localStorage.getItem(chatId)) || [];
@@ -31,7 +35,6 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
 
   useEffect(() => {
     const onReceived = (data) => {
-      console.log("Received message data:", data.recieverName);
       const chatId = [data.senderPhoneNumber, data.recieverPhoneNumber].sort().join("_");
       saveMessage(chatId, data);
       setAllMessages((prev) => [
@@ -97,35 +100,41 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
 
   return (
     <div className="w-full h-full flex flex-col bg-white">
-      {currentFriend.length === 0 ? (
+      {!currentFriend?.phoneNumber ? (
         <div className="flex-1 flex items-center justify-center bg-gray-50/80">
-          <div className="text-center p-6 max-w-sm">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 border border-blue-200/50 mb-4">
-              <svg className="w-10 h-10 text-cyan-500" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
-              </svg>
-            </div>
-            <h3 className="text-gray-800 font-medium text-xl mb-2">Your messages</h3>
-            <p className="text-gray-500 leading-relaxed">
-              Send private messages to start a conversation with your friends
-            </p>
-          </div>
+          ...
         </div>
       ) : (
         <>
-          <ChatHeader isMobile={isMobile} setIsChatOpen={setIsChatOpen} />
+          <ChatHeader isMobile={isMobile} setIsChatOpen={setIsChatOpen} setIsUserDetailOpen={setIsUserDetailOpen} setFriendDetailCardOpen={setFriendDetailCardOpen} />
+
+          {isUserDetailOpen && (
+           
+            <Suspense >
+              <UserDetailsCard setIsUserDetailOpen={setIsUserDetailOpen} />
+            </Suspense>
+          )}
 
           <div className="flex-1 overflow-y-auto py-2 sm:py-4 space-y-1 sm:space-y-2 bg-gray-50">
             {allMessages.map((message, index) => (
               <Message key={index} message={message} />
             ))}
           </div>
+           {friendDetailCardOpen && (
+           
+            <Suspense >
+              <FriendDetails  setFriendDetailCardOpen={setFriendDetailCardOpen} friendDetailCardOpen={friendDetailCardOpen} currentFriend={currentFriend}/>
+            </Suspense>
+          )}
+
+
           <div ref={chatEndRef} />
           <Footer SendMessage={SendMessage} />
         </>
       )}
     </div>
   );
+
 }
 
 export default ChatLayout;

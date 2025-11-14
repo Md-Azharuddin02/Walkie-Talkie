@@ -45,7 +45,6 @@ const UsersList = () => {
       fetchFriendList(user._id);
     }
   }, [user?._id, fetchFriendList]);
-console.log(friendList);
   // Memoized friend selection handler
   const handleFriendSelect = useCallback((friend) => {
     setCurrentFriend(friend);

@@ -5,7 +5,7 @@ import { FiVideo, FiSearch, FiMoreVertical } from 'react-icons/fi';
 import { IoArrowBackSharp } from "react-icons/io5";
 
 
-const ChatHeader = ({isMobile, setIsChatOpen}) => {
+const ChatHeader = ({isMobile, setIsChatOpen, setIsUserDetailOpen, setFriendDetailCardOpen}) => {
   const { user, currentFriend } = useContext(Store);
 
   const profileUrl = currentFriend?.profileImage || img;
@@ -24,16 +24,18 @@ const ChatHeader = ({isMobile, setIsChatOpen}) => {
     <div className="flex items-center justify-between p-3 sm:p-4 bg-gray-100 border-b border-gray-200 min-h-16">
       {/* Left Section */}
       {isMobile && <IoArrowBackSharp className='mr-3 cursor-pointer' onClick={()=>setIsChatOpen(false)} />}
-      <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer flex-1 min-w-0">
+      <div className="flex items-center space-x-2 sm:space-x-3  flex-1 min-w-0">
         
         <img
           src={profileUrl}
           alt="Profile"
-          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
+          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0 cursor-pointer"
+          onClick={()=>setFriendDetailCardOpen(true)}
         />
         
-        <h2 className="text-base sm:text-lg font-semibold text-gray-800 truncate">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800 truncate cursor-pointer" onClick={()=>setFriendDetailCardOpen(true)}>
           {displayName}
+          
         </h2>
       </div>
 
@@ -44,6 +46,7 @@ const ChatHeader = ({isMobile, setIsChatOpen}) => {
             key={idx} 
             className={iconButtonClass} 
             aria-label={label}
+            onClick={() => setIsUserDetailOpen(true)}
           >
             {icon}
           </button>

@@ -159,10 +159,8 @@ const Layout = () => {
 
   return (
     <div className="w-full h-screen flex bg-gray-50 overflow-hidden">
-      {/* Sidebar (always visible on desktop, responsive on mobile) */}
       <ResponsiveSidebar />
 
-      {/* LEFT PANEL — Only on Desktop */}
       {!isMobile && (
         <aside
           className="w-96 ml-20 h-full border-r border-gray-200 bg-white"
@@ -173,7 +171,6 @@ const Layout = () => {
         </aside>
       )}
 
-      {/* MAIN AREA */}
       <main
         className="flex-1 h-full overflow-hidden bg-gray-100 pb-0"
         role="main"
