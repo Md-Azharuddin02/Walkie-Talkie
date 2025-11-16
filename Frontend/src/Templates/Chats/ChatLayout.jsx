@@ -11,11 +11,13 @@ import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import Footer from "./Footer";
 import { socket } from "../../Custom/socket";
+import ChatLoader from "../../Components/ChatLoader";
 
 // Lazy
 const UserDetailsCard = lazy(() => import("./UserDetailCard"));
 const FriendDetails = lazy(() => import("./FriendDetails"));
 const TypingEffect = lazy(() => import("./TypingEffect"));
+const NoChatSelected = lazy(() => import("../Chats/NoChatSelected "));
 
 const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   const { user, currentFriend } = useContext(Store);
@@ -132,9 +134,9 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
 
   if (!currentFriend?.phoneNumber) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-100">
-        ...
-      </div>
+      <Suspense fallback={<ChatLoader />}>
+        <NoChatSelected />
+      </Suspense>
     );
   }
 
