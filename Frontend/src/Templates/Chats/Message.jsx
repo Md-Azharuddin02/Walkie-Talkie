@@ -1,49 +1,45 @@
 import React from "react";
 
 const Message = ({ message }) => {
-  const isSender = message.direction === "out"; 
-  
+  const isSender = message.direction === "out";
+
   return (
     <div
-      className={`mb-3 sm:mb-4 w-full flex px-2 sm:px-4 ${
+      className={`w-full px-3 sm:px-4 mb-2 flex ${
         isSender ? "justify-end" : "justify-start"
       }`}
     >
       <div
-        className={`text-sm rounded-xl p-2 sm:p-3 shadow-md break-words ${
-          isSender 
-            ? "bg-blue-600 text-white" 
-            : "bg-white text-gray-800"
-        }`}
-        style={{ 
-          width: "fit-content", 
-          maxWidth: "85%",
-          ...(window.innerWidth >= 640 && { maxWidth: "75%" }),
-          ...(window.innerWidth >= 768 && { maxWidth: "70%" }),
-          ...(window.innerWidth >= 1024 && { maxWidth: "60%" }),
-          ...(window.innerWidth >= 1280 && { maxWidth: "50%" })
-        }}
+        className={`
+          relative 
+          px-3 py-2 sm:px-4 sm:py-3
+          max-w-[75%] sm:max-w-[70%] lg:max-w-[60%]
+          rounded-2xl text-sm sm:text-base leading-relaxed
+          ${isSender 
+            ? "bg-blue-600 text-white rounded-br-none"
+            : "bg-white text-gray-900 rounded-bl-none shadow-md"
+          }
+        `}
       >
-        {/* Sender Name */}
-        <div className={`font-semibold mb-1 text-xs sm:text-sm ${
-          isSender ? "text-blue-100" : "text-red-600"
-        }`}>
-          {isSender ? "You" : message.recieverName}
-        </div>
+        {/* Sender name */}
+        {!isSender && (
+          <div className="text-xs font-medium text-blue-600 mb-1">
+            {message.receiverName}
+          </div>
+        )}
 
-        {/* Message Text */}
-        <div className="break-words">
-          <span className={`text-sm sm:text-base leading-relaxed ${
-            isSender ? "text-white" : "text-black"
-          }`}>
-            {message.message}
-          </span>
+        {/* Text */}
+        <div className="whitespace-pre-wrap break-words">
+          {message.message}
         </div>
 
         {/* Timestamp */}
-        <div className={`text-xs text-right mt-1 sm:mt-2 ${
-          isSender ? "text-blue-100" : "text-gray-500"
-        }`}>
+        <div
+          className={`
+            text-[10px] sm:text-xs mt-1 text-right 
+            ${isSender ? "text-blue-100" : "text-gray-500"}
+          `}
+        >
           {message.timestamp}
         </div>
       </div>

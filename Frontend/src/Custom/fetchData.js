@@ -15,7 +15,6 @@ const useFetchData = (base_URL) => {
            mode: 'cors',
         });
 
-        // console.log("Fetch response:", response);
         if (response.status !== 200) {
           throw new Error(`Unexpected status code: ${response.status}`);
         }

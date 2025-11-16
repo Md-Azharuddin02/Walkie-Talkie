@@ -6,7 +6,6 @@ const env = process.env.NODE_ENV || 'development';
 
 // Load the corresponding .env file
 const envPath = path.resolve(__dirname, `.env.${env}`);
-console.log(`📦 Loading env file: ${envPath}`);
 dotenv.config({ path: envPath });
 
 // Export config values

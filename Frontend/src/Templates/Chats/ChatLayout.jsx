@@ -1,140 +1,186 @@
-import React, { useContext, useState, useEffect, useRef, lazy, Suspense } from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  lazy,
+  Suspense,
+} from "react";
 import { Store } from "../../Store/Store";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import Footer from "./Footer";
 import { socket } from "../../Custom/socket";
+
+// Lazy
 const UserDetailsCard = lazy(() => import("./UserDetailCard"));
 const FriendDetails = lazy(() => import("./FriendDetails"));
+const TypingEffect = lazy(() => import("./TypingEffect"));
 
 const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   const { user, currentFriend } = useContext(Store);
+
   const [allMessages, setAllMessages] = useState([]);
-  const chatEndRef = useRef(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+
   const [isUserDetailOpen, setIsUserDetailOpen] = useState(false);
   const [friendDetailCardOpen, setFriendDetailCardOpen] = useState(false);
 
-  function saveMessage(chatId, message) {
-    let messages = JSON.parse(localStorage.getItem(chatId)) || [];
-    messages.push(message);
-    localStorage.setItem(chatId, JSON.stringify(messages));
-  }
+  const [sendTyping, setSendTyping] = useState(false);
+  const [receivedTyping, setReceivedTyping] = useState(false);
 
-  function getMessagesWithFriend(senderPhoneNumber, recieverPhoneNumber) {
-    if (!senderPhoneNumber || !recieverPhoneNumber) return [];
-    const chatId = [senderPhoneNumber, recieverPhoneNumber].sort().join("_");
+  const bottomRef = useRef(null);
+
+
+  const chatId =
+    user && currentFriend
+      ? [user.phoneNumber, currentFriend.phoneNumber].sort().join("_")
+      : null;
+
+  const loadMessages = () => {
+    if (!chatId) return [];
     return JSON.parse(localStorage.getItem(chatId)) || [];
-  }
+  };
+
+  const saveMessage = (msg) => {
+    if (!chatId) return;
+    const stored = loadMessages();
+    stored.push(msg);
+    localStorage.setItem(chatId, JSON.stringify(stored));
+  };
+
 
   useEffect(() => {
-    if (user && currentFriend) {
-      const messages = getMessagesWithFriend(user.phoneNumber, currentFriend.phoneNumber);
-      setAllMessages(messages);
-    }
+    if (!user || !currentFriend) return;
+    setAllMessages(loadMessages());
   }, [currentFriend, user]);
+
 
   useEffect(() => {
     const onReceived = (data) => {
-      const chatId = [data.senderPhoneNumber, data.recieverPhoneNumber].sort().join("_");
-      saveMessage(chatId, data);
-      setAllMessages((prev) => [
-        ...prev,
-        {
-          senderPhoneNumber: data.senderPhoneNumber,
-          recieverPhoneNumber: data.recieverPhoneNumber,
-          message: data.message,
-          time: data.timestamp,
-          recieverName: data.recieverName,
-          direction: data.direction,
-        },
-      ]);
-    };
-
-    const onDisconnect = () => {
-      console.log("Disconnected from the server!");
+      saveMessage(data);
+      setAllMessages((prev) => [...prev, data]);
     };
 
     socket.on("received-message", onReceived);
-    socket.on("disconnect", onDisconnect);
 
-    return () => {
-      socket.off("received-message", onReceived);
-      socket.off("disconnect", onDisconnect);
-    };
+    return () => socket.off("received-message", onReceived);
   }, []);
 
+
+  useEffect(() => {
+    if (!user?.phoneNumber) return;
+
+    const handleOnlineUsers = (list) => setOnlineUsers(list);
+
+    socket.on("online-users-list", handleOnlineUsers);
+    socket.emit("join", { userPhoneNumber: user.phoneNumber });
+
+    return () => socket.off("online-users-list", handleOnlineUsers);
+  }, [user]);
+
+
   const SendMessage = (message) => {
+    if (!currentFriend) return;
+
     const payload = {
       senderPhoneNumber: user.phoneNumber,
       recieverPhoneNumber: currentFriend.phoneNumber,
       recieverName: currentFriend.name,
       message,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
       direction: "out",
     };
 
-    // Optimistic append
-    setAllMessages((prev) => [
-      ...prev,
-      {
-        userId: user.phoneNumber,
-        message,
-        timestamp: payload.timestamp,
-        phoneNumber: user.phoneNumber,
-        direction: "out",
-      },
-    ]);
-
-    const chatId = [payload.senderPhoneNumber, payload.recieverPhoneNumber].sort().join("_");
-    saveMessage(chatId, payload);
+    setAllMessages((prev) => [...prev, payload]);
+    saveMessage(payload);
 
     socket.emit("send-message", payload);
   };
 
+
   useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [allMessages]);
+    if (!currentFriend || !user) return;
+
+    socket.emit("typing", {
+      sender: user.phoneNumber,
+      receiver: currentFriend.phoneNumber,
+      isTyping: sendTyping,
+    });
+  }, [sendTyping, currentFriend, user]);
+
+  useEffect(() => {
+    const handleTyping = ({ sender, isTyping }) => {
+      if (sender === currentFriend?.phoneNumber) {
+        setReceivedTyping(isTyping);
+      }
+    };
+
+    socket.on("typing", handleTyping);
+    return () => socket.off("typing", handleTyping);
+  }, [currentFriend]);
+
+
+  useEffect(() => {
+    if (!bottomRef.current) return;
+    bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [allMessages, receivedTyping]);
+
+
+  if (!currentFriend?.phoneNumber) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-gray-100">
+        ...
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col bg-white">
-      {!currentFriend?.phoneNumber ? (
-        <div className="flex-1 flex items-center justify-center bg-gray-50/80">
-          ...
-        </div>
-      ) : (
-        <>
-          <ChatHeader isMobile={isMobile} setIsChatOpen={setIsChatOpen} setIsUserDetailOpen={setIsUserDetailOpen} setFriendDetailCardOpen={setFriendDetailCardOpen} />
+      <ChatHeader
+        isMobile={isMobile}
+        setIsChatOpen={setIsChatOpen}
+        setIsUserDetailOpen={setIsUserDetailOpen}
+        setFriendDetailCardOpen={setFriendDetailCardOpen}
+        onlineUsers={onlineUsers}
+      />
 
-          {isUserDetailOpen && (
-           
-            <Suspense >
-              <UserDetailsCard setIsUserDetailOpen={setIsUserDetailOpen} />
-            </Suspense>
-          )}
-
-          <div className="flex-1 overflow-y-auto py-2 sm:py-4 space-y-1 sm:space-y-2 bg-gray-50">
-            {allMessages.map((message, index) => (
-              <Message key={index} message={message} />
-            ))}
-          </div>
-           {friendDetailCardOpen && (
-           
-            <Suspense >
-              <FriendDetails  setFriendDetailCardOpen={setFriendDetailCardOpen} friendDetailCardOpen={friendDetailCardOpen} currentFriend={currentFriend}/>
-            </Suspense>
-          )}
-
-
-          <div ref={chatEndRef} />
-          <Footer SendMessage={SendMessage} />
-        </>
+      {isUserDetailOpen && (
+        <Suspense>
+          <UserDetailsCard setIsUserDetailOpen={setIsUserDetailOpen} />
+        </Suspense>
       )}
+
+      <div className="flex-1 overflow-y-auto py-2 sm:py-4 space-y-1 sm:space-y-2 bg-gray-50">
+        {allMessages.map((msg, idx) => (
+          <Message key={idx} message={msg} />
+        ))}
+
+        {receivedTyping && (
+          <Suspense>
+            <TypingEffect />
+          </Suspense>
+        )}
+
+        <div ref={bottomRef}></div>
+      </div>
+
+      {friendDetailCardOpen && (
+        <Suspense>
+          <FriendDetails
+            setFriendDetailCardOpen={setFriendDetailCardOpen}
+            friendDetailCardOpen={friendDetailCardOpen}
+            currentFriend={currentFriend}
+          />
+        </Suspense>
+      )}
+
+      <Footer SendMessage={SendMessage} setSendTyping={setSendTyping} />
     </div>
   );
-
-}
+};
 
 export default ChatLayout;

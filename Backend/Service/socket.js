@@ -9,46 +9,97 @@ const socketServer = (server) => {
     },
   });
 
-  // Map phone -> socketId
-  const onlineUsers = new Map();
-  const socketToPhone = new Map();
+  // Maps
+  const onlineUsers = new Map();      // phone → socketId
+  const socketToPhone = new Map();    // socketId → phone
 
   io.on("connection", (socket) => {
+
+    // -------------------------------
+    // USER JOINS
+    // -------------------------------
     socket.on("join", ({ userPhoneNumber }) => {
       if (!userPhoneNumber) return;
+
       onlineUsers.set(userPhoneNumber, socket.id);
       socketToPhone.set(socket.id, userPhoneNumber);
-      console.log(`JOIN: ${userPhoneNumber} -> ${socket.id}`);
+
+
+      io.emit("online-users-list", Array.from(onlineUsers.keys()));
     });
 
-    socket.on("send-message", (data) => {
-      const { senderPhoneNumber, recieverName, recieverPhoneNumber, message, direction, timestamp } = data || {};
-      if (!recieverPhoneNumber) return;
+    // -------------------------------
+    // SEND MESSAGE
+    // -------------------------------
+    socket.on("send-message", (data = {}) => {
+      // FIX: Handle misspelled frontend keys
+      const senderPhoneNumber = data.senderPhoneNumber;
 
-      const receiverSocketId = onlineUsers.get(recieverPhoneNumber);
-      if (!receiverSocketId) {
-        console.log(`Receiver ${recieverPhoneNumber} is offline`);
+      const receiverPhoneNumber =
+        data.receiverPhoneNumber || data.recieverPhoneNumber;
+
+      const receiverName =
+        data.receiverName || data.recieverName;
+
+      const message = data.message;
+      const timestamp = data.timestamp;
+
+      if (!senderPhoneNumber || !receiverPhoneNumber || !message) {
         return;
       }
 
-      io.to(receiverSocketId).emit("received-message", {
+      const receiverSocketId = onlineUsers.get(receiverPhoneNumber);
+
+      // Send to receiver
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("received-message", {
+          senderPhoneNumber,
+          receiverPhoneNumber,
+          receiverName,
+          message,
+          timestamp,
+          direction: "in",
+        });
+      }
+
+      // Send confirmation to sender
+      io.to(socket.id).emit("message-sent-confirmation", {
         senderPhoneNumber,
-        recieverPhoneNumber,
+        receiverPhoneNumber,
+        receiverName,
         message,
         timestamp,
-        recieverName,
-        direction: direction === "out" ? "in" : "out",
-
-
+        direction: "out",
       });
     });
 
+    // -------------------------------
+    // TYPING INDICATOR
+    // -------------------------------
+    socket.on("typing", ({ sender, receiver, isTyping }) => {
+      if (!sender || !receiver) return;
+
+      const receiverId = onlineUsers.get(receiver);
+
+      if (receiverId) {
+        io.to(receiverId).emit("typing", {
+          sender,
+          isTyping,
+        });
+      }
+    });
+
+    // -------------------------------
+    // DISCONNECT
+    // -------------------------------
     socket.on("disconnect", () => {
       const phone = socketToPhone.get(socket.id);
+
       if (phone) {
         onlineUsers.delete(phone);
         socketToPhone.delete(socket.id);
-        console.log(`DISCONNECT: ${phone} (${socket.id}) removed from onlineUsers`);
+
+        io.emit("online-users-list", Array.from(onlineUsers.keys()));
       }
     });
   });

@@ -92,8 +92,7 @@ async function addNewFriend(req, res) {
       UserModel.findOne({phoneNumber} ),
     ]);
 
-    console.log("Adding friend:", friendDetails);
-    console.log("For user:", user);
+
 
     if (!user) return res.status(404).json({ message: "User not found" });
     if (!friendDetails) return res.status(404).json({ message: "Friend not found" });

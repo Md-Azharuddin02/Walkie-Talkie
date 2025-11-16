@@ -55,10 +55,6 @@ export default function ChatMessage({ type, message }) {
               key={index}
               Icon={Icon}
               hoverColor={hoverColor}
-              onClick={() => {
-                // Add your click handlers here
-                console.log(`${Icon.name} clicked`);
-              }}
             />
           ))}
         </div>

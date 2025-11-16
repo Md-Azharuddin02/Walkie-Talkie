@@ -14,11 +14,9 @@ const UserProfile = () => {
     profileImage:  user.profileImage || "",
   });
 
-  console.log("UserProfile render:", updateProfile );
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0];
-    console.log("Selected file:", selectedFile);
     if (selectedFile) {
       // Generate image preview URL for the selected image
       const fileUrl = URL.createObjectURL(selectedFile);

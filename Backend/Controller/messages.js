@@ -29,7 +29,6 @@ const hangleSaveMessage= async (message)=>{
         createdAt: new Date(),
       });
       await newMessage.save();
-      console.log("Message saved to database");
     }catch(error){
       console.error("Error saving message:", error);
     }

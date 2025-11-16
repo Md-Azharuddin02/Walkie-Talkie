@@ -53,7 +53,6 @@ export default async function getDeepSeekResponseStream(
     }
 
     const reader = res.body.getReader();
-    console.log("🚀 Stream started", reader);
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
     try {

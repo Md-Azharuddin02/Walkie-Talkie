@@ -65,7 +65,6 @@ export default function GetPrompt({ setBotMessage }) {
           }
         },
         (fullMessage) => {
-          console.log("✅ Streaming completed:", fullMessage);
           updateLastMessage((last) => ({ ...last, isStreaming: false }));
           setIsStreaming(false);
         },
@@ -92,7 +91,6 @@ export default function GetPrompt({ setBotMessage }) {
   }, [handleSendMessage, isStreaming]);
 
   const handleVoiceInput = useCallback(() => {
-    console.log("🎤 Voice input clicked - implement speech recognition here");
   }, []);
 
   const cancelStreaming = useCallback(() => {
