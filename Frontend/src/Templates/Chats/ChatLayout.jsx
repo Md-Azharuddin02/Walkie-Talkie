@@ -18,6 +18,7 @@ const UserDetailsCard = lazy(() => import("./UserDetailCard"));
 const FriendDetails = lazy(() => import("./FriendDetails"));
 const TypingEffect = lazy(() => import("./TypingEffect"));
 const NoChatSelected = lazy(() => import("../Chats/NoChatSelected "));
+const ChatSkeleton = lazy(() => import("../../Components/Loaders/ChatSkeleton"));
 
 const ChatLayout = ({ isMobile, setIsChatOpen }) => {
   const { user, currentFriend } = useContext(Store);
@@ -158,7 +159,10 @@ const ChatLayout = ({ isMobile, setIsChatOpen }) => {
 
       <div className="flex-1 overflow-y-auto py-2 sm:py-4 space-y-1 sm:space-y-2 bg-gray-50">
         {allMessages.map((msg, idx) => (
-          <Message key={idx} message={msg} />
+          <Suspense fallback={<ChatSkeleton />}>
+            <Message key={idx} message={msg} />
+          </Suspense>
+
         ))}
 
         {receivedTyping && (

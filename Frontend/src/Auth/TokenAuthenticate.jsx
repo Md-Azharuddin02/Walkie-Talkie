@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { Store } from "../Store/Store";
 import { socket } from "../Custom/socket"
-import Loader from "../Components/Loader.jsx";
+const LoadingSkeleton = React.lazy(() => import("../Components/Loaders/LoadingSkeleton"));
 
 
 export default function TokenAuthenticate({ children }) {
@@ -53,12 +53,11 @@ export default function TokenAuthenticate({ children }) {
 
     return () => {
       socket.off("connect", onConnect);
-      // optional: socket.disconnect(); // only if you want to end session on unmount
     };
   }, [authenticated, user?.phoneNumber]);
 
   if (loading) {
-    return <Loader />;
+    return <LoadingSkeleton />;
   }
 
   if (!authenticated) {

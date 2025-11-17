@@ -1,8 +1,9 @@
 import React from "react";
+
 export default function Loader() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="relative">
+    <div className="fixed inset-0 bg-white flex justify-center items-center z-50">
+      <div className="relative w-24 h-24">
         {/* Outer rotating ring */}
         <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-500 border-r-purple-500 animate-spin w-24 h-24"></div>
         

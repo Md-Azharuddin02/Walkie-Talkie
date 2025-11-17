@@ -10,6 +10,7 @@ import React, {
 
 import ResponsiveSidebar from "../Templates/Sidebar/ResponsiveSidebar";
 import { Store } from "../Store/Store";
+import { Loader } from "lucide-react";
 
 // Lazy components
 const UsersList = lazy(() => import("../Templates/Sidebar/UsersList"));
@@ -21,13 +22,8 @@ const AddFriendCard = lazy(() => import("../Templates/Sidebar/AddFriend"));
 const ChatLoader = lazy(() => import("../Components/ChatLoader"));
 const UserListLoader = lazy(() => import("../Components/UserListLoader"));
 const GPTLayout = lazy(() => import("../Services/LLM GPT/GPT Layout/GPTLayout"));
+const SidebarSkeleton = lazy(() => import("../Components/Loaders/SidebarSkeleton"));
 
-// Loading Fallback
-const LoadingFallback = ({ componentName = "component" }) => (
-  <div className="flex items-center justify-center h-full min-h-[200px]">
-    <div className="text-gray-500">Loading {componentName}...</div>
-  </div>
-);
 
 // Error boundary
 class LazyComponentErrorBoundary extends React.Component {
@@ -102,7 +98,7 @@ const Layout = () => {
 
       profile: (
         <LazyComponentErrorBoundary>
-          <Suspense fallback={<LoadingFallback componentName="User Profile" />}>
+          <Suspense fallback={<Loader />}>
             <UserProfile />
           </Suspense>
         </LazyComponentErrorBoundary>
@@ -110,7 +106,7 @@ const Layout = () => {
 
       settings: (
         <LazyComponentErrorBoundary>
-          <Suspense fallback={<LoadingFallback componentName="Settings" />}>
+          <Suspense fallback={<Loader />}>
             <Settings />
           </Suspense>
         </LazyComponentErrorBoundary>
@@ -118,7 +114,7 @@ const Layout = () => {
 
       taskList: (
         <LazyComponentErrorBoundary>
-          <Suspense fallback={<LoadingFallback componentName="Task List" />}>
+          <Suspense fallback={<Loader />}>
             <TaskList />
           </Suspense>
         </LazyComponentErrorBoundary>
@@ -172,7 +168,7 @@ const Layout = () => {
   const addFriendCard = useMemo(
     () => (
       <LazyComponentErrorBoundary>
-        <Suspense fallback={<LoadingFallback componentName="Add Friend" />}>
+        <Suspense fallback={<Loader />}>
           <AddFriendCard />
         </Suspense>
       </LazyComponentErrorBoundary>
@@ -182,7 +178,13 @@ const Layout = () => {
 
   return (
     <div className="w-full h-screen flex bg-gray-50 overflow-hidden">
-      <ResponsiveSidebar />
+      <LazyComponentErrorBoundary>
+        <Suspense fallback={<SidebarSkeleton />}>
+          <ResponsiveSidebar />
+        </Suspense>
+      </LazyComponentErrorBoundary>
+
+
 
       {/* Desktop tabs */}
       {!isMobile && (
