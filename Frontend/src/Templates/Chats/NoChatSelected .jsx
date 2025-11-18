@@ -28,7 +28,10 @@ const NoChatSelected = () => {
           
           {/* Floating dots */}
           <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 bg-blue-500 rounded-full animate-bounce"></div>
-          <div className="absolute -bottom-1 -left-1 sm:-bottom-2 sm:-left-2 w-2 h-2 sm:w-3 sm:h-3 bg-blue-400 rounded-full animate-bounce [animation-delay:0.3s]"></div>
+          <div
+            className="absolute -bottom-1 -left-1 sm:-bottom-2 sm:-left-2 w-2 h-2 sm:w-3 sm:h-3 bg-blue-400 rounded-full animate-bounce"
+            style={{ animationDelay: "0.3s" }}
+          ></div>
         </div>
 
         {/* Main heading */}
@@ -44,12 +47,17 @@ const NoChatSelected = () => {
           or begin a new conversation
         </p>
 
-
         {/* Decorative elements */}
         <div className="mt-8 sm:mt-10 md:mt-12 flex justify-center space-x-2 sm:space-x-3">
           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full animate-pulse"></div>
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-300 rounded-full animate-pulse [animation-delay:0.2s]"></div>
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-200 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+          <div
+            className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-300 rounded-full animate-pulse"
+            style={{ animationDelay: "0.2s" }}
+          ></div>
+          <div
+            className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-200 rounded-full animate-pulse"
+            style={{ animationDelay: "0.4s" }}
+          ></div>
         </div>
       </div>
     </div>

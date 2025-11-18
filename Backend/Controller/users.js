@@ -32,7 +32,6 @@ async function searchNewFriend(req, res) {
   }
 
   try {
-    // fetch fresh user from DB
     const user = await UserModel.findById(req.user._id);
 
     const friendToAdd = await UserModel.findOne({ phoneNumber });
@@ -142,10 +141,8 @@ async function getAllFriendList(req, res) {
   }
 }
 
-// ─── GET USER PROFILE (example, requiring `req.user.id` via some auth) ───────────
 const getUserProfile = async (req, res) => {
   try {
-    // Imagine you set req.user.id in some authentication middleware
     const user = await UserModel.findById(req.user.id).select(
       "-otpSecret -generatedAt"
     );
@@ -174,14 +171,12 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-// ─── UPDATE PROFILE (name, about, + image upload) ────────────────────────────────
 const { uploadOnCloudinary } = require("../Service/cloudinary");
 const updateProfile = async (req, res) => {
   const { _id: userId } = req.user;
   const { name, about } = req.body;
   const profileImagePath = req.file?.path;
 
-  // Validate inputs
   if (!name && !about && !profileImagePath) {
     return res.status(400).json({
       success: false,

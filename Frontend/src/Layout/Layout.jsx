@@ -194,10 +194,17 @@ const Layout = () => {
       )}
 
       {/* Main Area */}
-      <main className="flex-1 h-full overflow-hidden bg-gray-100">
-        {!isMobile && isCardOpen && addFriendCard}
+      <main className="flex-1">
         {isMobile ? renderMobileView : desktopChatLayout}
       </main>
+
+      {isCardOpen && (
+<div className="fixed inset-0 flex items-center justify-center backdrop-blur-[2px] bg-black/5 z-[999]">
+  {addFriendCard}
+</div>
+
+      )}
+
     </div>
   );
 };
